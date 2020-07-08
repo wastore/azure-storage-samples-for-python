@@ -8,11 +8,11 @@
 ###############################################
 
 import os
-import sys
-from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
-from azure.keyvault.keys import KeyClient
+
 from azure.identity import ClientSecretCredential
+from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
+from azure.storage.blob import BlobServiceClient
 
 # environmental variables
 KEYVAULT_URL = os.getenv('AZURE_KEYVAULT_DNS_NAME')

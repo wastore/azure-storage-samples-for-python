@@ -1,4 +1,3 @@
-import os
 from azure.storage.blob import BlobServiceClient
 from cryptography.fernet import Fernet
 
@@ -49,7 +48,9 @@ def upload_blob(filename, blob_service_client, container_name):
 
 if __name__ == "__main__":
     # set connection string environmental variable
-    connection_str = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_str = "DefaultEndpointsProtocol=https;AccountName=caromedevtest;AccountKey=/IaVQtMqKb0qO1C" \
+                     "/miYYAHbyjIla/O3f1kXxMhksgCfa/KDDcdkd1x2iaFGu4tFY3LlR4xYNXMLFrlQOhWZpig==;EndpointSuffix=core" \
+                     ".windows.net"
     # access a container using connection string
     bs_client = BlobServiceClient.from_connection_string(connection_str)
     # set container name

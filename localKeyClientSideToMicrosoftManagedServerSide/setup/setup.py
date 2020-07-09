@@ -46,7 +46,7 @@ if __name__ == "__main__":
     bs_client = BlobServiceClient.from_connection_string(connection_str)
     # set container name
     cont_name = "privatecsetests"
-    message = b"hello blobs"
+    message = b"microsoft managed test"
 
     # create container by name
     try:
@@ -57,6 +57,6 @@ if __name__ == "__main__":
     # call to methods
     make_key()
     mykey = get_key()
-    blob_name = "localtest.txt"
+    blob_name = "mm-localtest.txt"
     data = encrypt(mykey, message)
     upload_blob(data, bs_client, cont_name, blob_name)

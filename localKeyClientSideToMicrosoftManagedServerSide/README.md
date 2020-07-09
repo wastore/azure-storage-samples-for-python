@@ -14,6 +14,8 @@ In the setup folder, please navigate to setup.py for a program example of what s
 In the setup folder, please read through and update the config.py file with the required information before running the main program, migration.py. All of the information in the config.py file is required, or else the program will not function.
 ####migration.py
 As this program is a migration from local client side encryption, for the program to run you must replace decryption() with your personal decryption method, so that the program can undo your encryption. This specific program is using Cryptography.Fernet to perform decryption.
+####client side encryption key
+If you plan to run the main program with your encrypted content, please add the file containing your encryption key to the setup folder
 
 ###Running the Main Program
 ####migration.py

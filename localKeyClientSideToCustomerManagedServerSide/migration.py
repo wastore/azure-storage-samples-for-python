@@ -1,5 +1,5 @@
 import os
-from localKeyClientSideToMicrosoftManagedServerSide.setup import config as cfg
+from localKeyClientSideToCustomerManagedServerSide.setup import config as cfg
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys import KeyClient
@@ -15,6 +15,15 @@ def get_blob(filename, blob_service_client, cont_name):
     blob_content = blob_client.download_blob().readall()
 
     return blob_content
+
+
+def get_keyvault_key(kclient):
+    # this method gets a customer managed keyvault key to make encryption scope for server side encryption
+    keyvault_key = kclient.get_key(cfg.keyname)
+    # get key_uri for encryption scope
+    k_uri = str(keyvault_key.id)
+
+    return k_uri
 
 
 def get_local_key():
@@ -37,11 +46,10 @@ def decryption(my_key, encrypted_data):
     return decrypted_data
 
 
-def encryption_scope():
-    # makes a Microsoft managed-key encryption scope
-    print("\nCreating Microsoft Managed Key Encryption Scope...\n")
+def encryption_scope(k_uri):
+    print("\nCreating Customer Managed Key Encryption Scope...\n")
     os.system(
-        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.SERVER_SCOPE_NAME + ' --key-source Microsoft.Storage --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + '"')
+        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.CUSTOMER_SCOPE_NAME + ' --key-source Microsoft.KeyVault --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + ' --key-uri ' + k_uri + '"')
 
 
 def upload_blob(filename, blob_service_client, cont_name, blob_data):
@@ -57,7 +65,7 @@ def upload_blob(filename, blob_service_client, cont_name, blob_data):
     # access specific container and blob
     blob_client = bs_client.get_blob_client(container=cont_name, blob=server_scope_blob)
     # upload and perform server side encryption with Microsoft managed encryption scope
-    blob_client.upload_blob(blob_data, encryption_scope=cfg.SERVER_SCOPE_NAME, blob_type=blobtype)
+    blob_client.upload_blob(blob_data, encryption_scope=cfg.CUSTOMER_SCOPE_NAME, blob_type=blobtype)
 
     print("\nBlob uploaded to Azure Storage Account.")
 
@@ -74,7 +82,8 @@ if __name__ == '__main__':
 
     # call to run methods
     content = get_blob(cfg.file, bs_client, cfg.cont_name)
+    key_uri = get_keyvault_key(key_client)
     key = get_local_key()
     data = decryption(key, content)
-    encryption_scope()
+    encryption_scope(key_uri)
     upload_blob(cfg.file, bs_client, cfg.cont_name, data)

@@ -6,35 +6,34 @@ from azure.keyvault.keys import KeyClient
 from cryptography.fernet import Fernet
 
 
-def download_blob(filename, blob_service_client, cont_name):
+def get_blob(filename, blob_service_client, cont_name):
     # download encrypted blob from azure storage
     # access specific container and blob to download from using blob client
     blob_client = blob_service_client.get_blob_client(container=cont_name, blob=filename)
-    print("\nDownloading blob from Azure Storage...")
+    print("\nReading blob from Azure Storage...")
     # write encrypted contents of blob to a file
-    with open(filename, "wb+") as download_file:
-        download_file.write(blob_client.download_blob().readall())
+    blob_content = blob_client.download_blob().readall()
+
+    return blob_content
 
 
 def get_local_key():
-    # get client side encryption key by name and return it
-    return open(cfg.local_key_path, "rb").read()
+    # get client side encryption key by path and return it
+    local_key = open(cfg.local_key_path, "rb").read()
+
+    return local_key
 
 
-def cse_decrypt(filename, mykey):
-    # REPLACE THIS WITH YOUR DECRYPTION ALGORITHM
+def decryption(my_key, encrypted_data):
+    # a method to decrypt client side encryption
     print("\nDecrypting client side encryption...")
+    # REPLACE THIS PART WITH YOU DECRYPTION METHOD
     # access key for decryption
-    f = Fernet(mykey)
-    # read encrypted data
-    with open(filename, "rb") as fn:
-        encrypted_data = fn.read()
+    f = Fernet(my_key)
     # decrypt encrypted data
     decrypted_data = f.decrypt(encrypted_data)
-    # write decrypted data to a file
-    with open(filename, "wb") as fn:
-        fn.write(decrypted_data)
-    # return decrypted data content
+
+    # return decrypted content in bytes
     return decrypted_data
 
 
@@ -45,7 +44,7 @@ def encryption_scope():
         'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.SERVER_SCOPE_NAME + ' --key-source Microsoft.Storage --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + '"')
 
 
-def upload_blob(filename, blob_service_client, cont_name, mydata):
+def upload_blob(filename, blob_service_client, cont_name, blob_data):
     # upload decrypted blob back to azure storage and perform server side encryption
     # determine the blob type for upload
     blob_client = blob_service_client.get_blob_client(container=cont_name, blob=filename)
@@ -58,7 +57,9 @@ def upload_blob(filename, blob_service_client, cont_name, mydata):
     # access specific container and blob
     blob_client = bs_client.get_blob_client(container=cont_name, blob=server_scope_blob)
     # upload and perform server side encryption with Microsoft managed encryption scope
-    blob_client.upload_blob(mydata, encryption_scope=cfg.SERVER_SCOPE_NAME, blob_type=blobtype)
+    blob_client.upload_blob(blob_data, encryption_scope=cfg.SERVER_SCOPE_NAME, blob_type=blobtype)
+
+    print("\nBlob uploaded to Azure Storage Account.")
 
 
 if __name__ == '__main__':
@@ -72,8 +73,8 @@ if __name__ == '__main__':
     cont_client = bs_client.get_container_client(cfg.cont_name)
 
     # call to run methods
-    download_blob(cfg.file, bs_client, cfg.cont_name)
+    content = get_blob(cfg.file, bs_client, cfg.cont_name)
     key = get_local_key()
-    data = cse_decrypt(cfg.file, key)
+    data = decryption(key, content)
     encryption_scope()
     upload_blob(cfg.file, bs_client, cfg.cont_name, data)

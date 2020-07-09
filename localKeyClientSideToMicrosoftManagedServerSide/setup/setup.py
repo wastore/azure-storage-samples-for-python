@@ -15,35 +15,26 @@ def get_key():
     return open("localkey.key", "rb").read()
 
 
-def encrypt(filename, encryption_key):
+def encrypt(encryption_key, my_message):
     # perform encryption using python extension
     print("Client side encrypting...")
     # use key to encrypt
     f = Fernet(encryption_key)
-    # read content from file
-    with open(filename, "rb") as fn:
-        file_data = fn.read()
     # encrypt content with extension
-    encrypted_data = f.encrypt(file_data)
-    # write encrypted content to file
-    with open(filename, "wb") as fn:
-        fn.write(encrypted_data)
+    encrypted_data = f.encrypt(my_message)
+
+    return encrypted_data
 
 
-def upload_blob(filename, blob_service_client, container_name):
+def upload_blob(my_data, blob_service_client, container_name, bname):
     # upload encrypted content to Azure storage
-    # access file with encrypted content
-    fn = open(filename, "r")
-    fn.close()
 
     # access specific container and blob with blob client
-    blob_client = blob_service_client.get_blob_client(container=container_name, blob=filename)
-    print("\nUploading to azure as blob: " + filename)
+    blob_client = blob_service_client.get_blob_client(container=container_name, blob=bname)
+    print("\nUploading blob to Azure Storage...")
     print("\nEncrypting blob on server...")
 
-    # upload encrypted data to specified blob
-    with open(filename, "rb") as data:
-        blob_client.upload_blob(data)
+    blob_client.upload_blob(my_data)
 
 
 if __name__ == "__main__":
@@ -55,6 +46,7 @@ if __name__ == "__main__":
     bs_client = BlobServiceClient.from_connection_string(connection_str)
     # set container name
     cont_name = "privatecsetests"
+    message = b"hello blobs"
 
     # create container by name
     try:
@@ -65,6 +57,6 @@ if __name__ == "__main__":
     # call to methods
     make_key()
     mykey = get_key()
-    file = "privatecsetest2.txt"
-    encrypt(file, mykey)
-    upload_blob(file, bs_client, cont_name)
+    blob_name = "localtest.txt"
+    data = encrypt(mykey, message)
+    upload_blob(data, bs_client, cont_name, blob_name)

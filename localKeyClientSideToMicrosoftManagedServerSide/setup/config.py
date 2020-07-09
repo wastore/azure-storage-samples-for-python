@@ -15,7 +15,7 @@ STORAGE_ACCOUNT = "caromedevtest"
 SERVER_SCOPE_NAME = "server-scope"
 
 cont_name = "privatecsetests"
-file = "privatecsetest2.txt"
+file = "localtest.txt"
 local_key_path = "setup\localkey.key"
 # here put what you want the encrypted blob to be named
 new_blob_name = "microsoft-managed-" + file

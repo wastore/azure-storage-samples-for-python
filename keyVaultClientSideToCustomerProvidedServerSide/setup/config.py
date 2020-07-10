@@ -11,13 +11,13 @@ SUB_ID = ["your_subscription_id"]
 RESOURCE_GROUP = ["your_resource_group_name"]
 STORAGE_ACCOUNT = ["your_storage_account_name"]
 
-# customer provided key for server side encryption
-customer_key = CustomerProvidedEncryptionKey(key_value=["your_key_value"],
+# if using customer provided key, set values here
+customer_key = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
+                                             key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
 
-                                            key_hash=["your_key_hash"])
+# keyvault key used for encryption
+keyname = ["keyvault_key_for_serverside_encryption_name"]
+
 cont_name = ["your_blob_container_name"]
 blob_name = ["your_blob_name.txt"]
-local_key = ["your_client_side_encryption_key_value"]
-local_key_name = ["your_local_key_name"]
-# here put what you want the encrypted blob to be named
-new_blob_name = ["name_for_your_serverside_encrypted_blob_upload"]
+new_blob_name = ["name_for_your_serverside_encrypted_blob"]

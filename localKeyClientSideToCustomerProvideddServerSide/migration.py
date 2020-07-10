@@ -66,7 +66,7 @@ if __name__ == '__main__':
     cont_client = bs_client.get_container_client(cfg.cont_name)
 
     # call to run methods
-    content = get_blob(cfg.file, bs_client, cfg.cont_name)
+    content = get_blob(cfg.blob_name, bs_client, cfg.cont_name)
     key = get_local_key()
     data = decryption(key, content)
-    upload_blob(cfg.file, bs_client, cfg.cont_name, data)
+    upload_blob(cfg.blob_name, bs_client, cfg.cont_name, data)

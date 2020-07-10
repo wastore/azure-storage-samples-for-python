@@ -9,15 +9,10 @@ SUB_ID = ["your_subscription_id"]
 RESOURCE_GROUP = ["your_resource_group_name"]
 STORAGE_ACCOUNT = ["your_storage_account_name"]
 
-# replace with name for customer managed encryption scope
-# this will be made automatically in the main program, so just insert what you want the name to be
-CUSTOMER_SCOPE_NAME = ["name_for_your_customer_managed_encryption_scope"]
+# replace with name for server managed encryption scope
+SERVER_SCOPE_NAME = ["name_for_your_server_managed_encryption_scope"]
 keyname = ["keyvault_key_for_serverside_encryption_name"]
 
 cont_name = ["your_blob_container_name"]
 blob_name = ["your_blob_name.txt"]
-local_key = ["your_client_side_encryption_key_value"]
-local_key_name = ["your_local_key_name"]
-# here put what you want the encrypted blob to be named
-new_blob_name = ["name_for_your_serverside_encrypted_blob_upload"]
-
+new_blob_name = ["name_for_your_serverside_encrypted_blob"]

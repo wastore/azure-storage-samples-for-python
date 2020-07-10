@@ -14,7 +14,8 @@ STORAGE_ACCOUNT = ["your_storage_account_name"]
 SERVER_SCOPE_NAME = ["name_for_your_customer_managed_encryption_scope"]
 
 cont_name = ["your_blob_container_name"]
-file = ["your_file_name.txt"]
+blob_name = ["your_blob_name.txt"]
 local_key = ["your_client_side_encryption_key_value"]
+local_key_name = ["your_local_key_name"]
 # here put what you want the encrypted blob to be named
 new_blob_name = ["name_for_your_serverside_encrypted_blob_upload"]

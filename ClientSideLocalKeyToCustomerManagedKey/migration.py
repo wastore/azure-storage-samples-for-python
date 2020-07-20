@@ -1,5 +1,5 @@
 import os
-from localKeyClientSideToCustomerManagedServerSide.setup import config as cfg
+from ClientSideLocalKeyToCustomerManagedKey.setup import config as cfg
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys import KeyClient
@@ -46,7 +46,7 @@ def decryption(my_key, encrypted_data):
     return decrypted_data
 
 
-def encryption_scope(k_uri):
+def create_encryption_scope(k_uri):
     print("\nCreating Customer Managed Key Encryption Scope...\n")
     os.system(
         'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.CUSTOMER_SCOPE_NAME + ' --key-source Microsoft.KeyVault --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + ' --key-uri ' + k_uri + '"')
@@ -81,9 +81,9 @@ if __name__ == '__main__':
     cont_client = bs_client.get_container_client(cfg.cont_name)
 
     # call to run methods
-    content = get_blob(cfg.file, bs_client, cfg.cont_name)
+    content = get_blob(cfg.blob_name, bs_client, cfg.cont_name)
     key_uri = get_keyvault_key(key_client)
     key = get_local_key()
     data = decryption(key, content)
-    encryption_scope(key_uri)
-    upload_blob(cfg.file, bs_client, cfg.cont_name, data)
+    create_encryption_scope(key_uri)
+    upload_blob(cfg.blob_name, bs_client, cfg.cont_name, data)

@@ -1,5 +1,5 @@
 import os
-from localKeyClientSideToMicrosoftManagedServerSide.setup import config as cfg
+from ClientSideLocalKeyToCustomerProvidedKey.setup import config as cfg
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys import KeyClient
@@ -37,13 +37,6 @@ def decryption(my_key, encrypted_data):
     return decrypted_data
 
 
-def encryption_scope():
-    # makes a Microsoft managed-key encryption scope
-    print("\nCreating Microsoft Managed Key Encryption Scope...\n")
-    os.system(
-        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.SERVER_SCOPE_NAME + ' --key-source Microsoft.Storage --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + '"')
-
-
 def upload_blob(filename, blob_service_client, cont_name, blob_data):
     # upload decrypted blob back to azure storage and perform server side encryption
     # determine the blob type for upload
@@ -51,13 +44,13 @@ def upload_blob(filename, blob_service_client, cont_name, blob_data):
     properties = blob_client.get_blob_properties()
     blobtype = properties.blob_type
 
-    # upload and use server side encryption with Microsoft managed key through encryption scope
-    server_scope_blob = cfg.new_blob_name
-    print("\nPerforming server side encryption with Microsoft Managed Key Encryption Scope...")
+    # upload and use server side encryption with customer provided key
+    customer_key_blob = cfg.new_blob_name
+    print("\nPerforming server side encryption with customer provided key...")
     # access specific container and blob
-    blob_client = bs_client.get_blob_client(container=cont_name, blob=server_scope_blob)
+    blob_client = bs_client.get_blob_client(container=cont_name, blob=customer_key_blob)
     # upload and perform server side encryption with Microsoft managed encryption scope
-    blob_client.upload_blob(blob_data, encryption_scope=cfg.SERVER_SCOPE_NAME, blob_type=blobtype)
+    blob_client.upload_blob(data, cpk=cfg.customer_key, blob_type=blobtype)
 
     print("\nBlob uploaded to Azure Storage Account.")
 
@@ -73,8 +66,7 @@ if __name__ == '__main__':
     cont_client = bs_client.get_container_client(cfg.cont_name)
 
     # call to run methods
-    content = get_blob(cfg.file, bs_client, cfg.cont_name)
+    content = get_blob(cfg.blob_name, bs_client, cfg.cont_name)
     key = get_local_key()
     data = decryption(key, content)
-    encryption_scope()
-    upload_blob(cfg.file, bs_client, cfg.cont_name, data)
+    upload_blob(cfg.blob_name, bs_client, cfg.cont_name, data)

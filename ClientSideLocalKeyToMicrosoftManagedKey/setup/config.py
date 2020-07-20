@@ -1,17 +1,17 @@
-KEYVAULT_URL = ["your_keyvault_url"]
-CLIENT_ID = ["your_client_id"]
-CLIENT_SECRET = ["your_client_id"]
-TENANT_ID = ["your_tenant_id"]
-connection_str = ["your_azure_storage_account_connection_str"]
+KEYVAULT_URL = ""
+CLIENT_ID = ""
+CLIENT_SECRET = ""
+TENANT_ID = ""
+connection_str = ""
 
 # items to make encryption scope
-SUB_ID = ["your_subscription_id"]
-RESOURCE_GROUP = ["your_resource_group_name"]
-STORAGE_ACCOUNT = ["your_storage_account_name"]
+SUB_ID = ""
+RESOURCE_GROUP = ""
+STORAGE_ACCOUNT = ""
 
 # replace with name for microsoft managed encryption scope
 # this will be made automatically in the main program, so just insert what you want the name to be
-SERVER_SCOPE_NAME = ["name_for_your_customer_managed_encryption_scope"]
+SERVER_SCOPE_NAME = "test-server-scope"
 
 cont_name = "client-side-local-key-to-customer-managed-key"
 blob_name = "blobExample.txt"

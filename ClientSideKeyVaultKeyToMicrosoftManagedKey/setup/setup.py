@@ -1,9 +1,10 @@
 import base64
+import os
 from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient, KeyVaultKey, KeyType
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys.crypto import CryptographyClient
-from ClientSideKeyVaultKeyToCustomerManagedKey.setup import config as cfg
+from ClientSideKeyVaultKeyToMicrosoftManagedKey.setup import config as cfg
 from azure.keyvault.secrets import SecretClient
 
 
@@ -35,16 +36,20 @@ class KeyWrapper:
         return self.kid
 
 
-def get_kvk(credential):
+def create_encryption_scope():
+    # makes a Microsoft managed-key encryption scope
+    print("\nCreating Microsoft Managed Key Encryption Scope...\n")
+    os.system(
+        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.server_managed_encryption_scope + ' --key-source Microsoft.Storage --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + '"')
+
+
+def get_keyvault_key(k_client, s_client):
     # if using RSA algorithm, get asymmetric key
     if "RSA" in cfg.key_wrap_algorithm:
-        key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
-        keyvault_key = key_client.get_key(cfg.keyname)
+        keyvault_key = k_client.get_key(cfg.keyname)
     # if using AES algorithm, get symmetric key
     else:
-        secret_client = SecretClient(vault_url=cfg.KEYVAULT_URL, credential=credential)
-
-        secret = secret_client.get_secret(cfg.secret)
+        secret = s_client.get_secret(cfg.secret)
         key_bytes = base64.urlsafe_b64decode(secret.value)
         keyvault_key = KeyVaultKey(key_id=secret.id, key_ops=["unwrapKey", "wrapKey"], k=key_bytes, kty=KeyType.oct)
 
@@ -67,7 +72,7 @@ def upload_blob(b_name, data, container_client):
     container_client.key_encryption_key = kek
 
     # upload blob to container
-    container_client.upload_blob(b_name, data)
+    container_client.upload_blob(b_name, data, overwrite=True)
 
 
 if __name__ == "__main__":
@@ -76,6 +81,8 @@ if __name__ == "__main__":
     # access keyvault client using credentials and reference to client keyvault
     # access blob service client using connection string as reference
     bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
+    secret_client = SecretClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
 
     # create or get container
     try:
@@ -84,6 +91,7 @@ if __name__ == "__main__":
         cont_client = bs_client.get_container_client(cfg.cont_name)
 
     # call to methods
-    kvk = get_kvk(credentials)
+    create_encryption_scope()
+    kvk = get_keyvault_key(key_client, secret_client)
     content = get_content(cfg.blob_name)
     upload_blob(cfg.blob_name, content, cont_client)

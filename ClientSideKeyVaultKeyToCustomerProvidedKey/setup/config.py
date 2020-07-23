@@ -25,4 +25,4 @@ key_wrap_algorithm = KeyWrapAlgorithm.rsa_oaep #.rsa_oaep, .rsa_oaep_256, .rsa1_
 
 cont_name = "client-side-keyvault-key-to-customer-provided-key"
 blob_name = "blobExample.txt"
-new_blob_name = "new" + blob_name
+migrated_blob_name = "cpk-" + blob_name

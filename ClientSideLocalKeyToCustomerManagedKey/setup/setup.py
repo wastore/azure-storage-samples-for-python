@@ -1,16 +1,48 @@
+import os
 from azure.storage.blob import BlobServiceClient
-from cryptography.fernet import Fernet
+from azure.keyvault.keys import KeyClient
 from ClientSideLocalKeyToCustomerManagedKey.setup import config as cfg
+from azure.identity import ClientSecretCredential
 
 
-def make_key():
-    # creates a key using a python extension for encryption
-    key = Fernet.generate_key()
-    # writing key content to a file
-    with open(cfg.local_key_name, "wb") as key_file:  # set keyname here
-        key_file.write(key)
+class KeyWrapper:
+    # REPLACE WITH YOUR PREFERRED KEYWRAPPING ALGORITHMS AND METHODS
 
-    return open(cfg.local_key_name, "rb").read()
+    def __init__(self, kek):
+        self.algorithm = cfg.key_wrap_algorithm
+        self.kek = kek
+        self.kid = kek
+
+    def wrap_key(self, key):
+        if self.algorithm == "example-algorithm":
+            return key
+        return key
+
+    def unwrap_key(self, key, _):
+        if self.algorithm == "example-algorithm":
+            return key
+        return key
+
+    def get_key_wrap_algorithm(self):
+        return self.algorithm
+
+    def get_kid(self):
+        return self.kid
+
+
+def get_key_uri(k_client):
+    # this method gets a customer managed keyvault key to make encryption scope for server side encryption
+    keyvault_key = k_client.get_key(cfg.serverside_encryption_keyname)
+    # get key_uri for encryption scope
+    k_uri = str(keyvault_key.id)
+
+    return k_uri
+
+
+def create_encryption_scope(k_uri):
+    print("\nCreating Customer Managed Key Encryption Scope...\n")
+    os.system(
+        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.customer_managed_encryption_scope + ' --key-source Microsoft.KeyVault --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + ' --key-uri ' + k_uri + '"')
 
 
 def get_content(filename):
@@ -20,45 +52,34 @@ def get_content(filename):
     return data
 
 
-def encrypt(encryption_key, data):
-    # perform encryption using python extension
-    print("Client side encrypting...")
-    # use key to encrypt
-    f = Fernet(encryption_key)
-    # encrypt content with extension
-    encrypted_content = f.encrypt(data)
-
-    return encrypted_content
-
-
-def upload_blob(my_data, blob_service_client, container_name, b_name):
+def upload_blob(data, blob_service_client, container_name, b_name):
     # upload encrypted content to Azure storage
+    kek = KeyWrapper(cfg.local_key)
 
     # access specific container and blob with blob client
     blob_client = blob_service_client.get_blob_client(container=container_name, blob=b_name)
+    blob_client.key_encryption_key = kek
+
     print("\nUploading blob to Azure Storage...")
     print("\nEncrypting blob on server...")
 
-    blob_client.upload_blob(my_data)
+    blob_client.upload_blob(data, overwrite=True)
 
 
 if __name__ == "__main__":
-    # set connection string environmental variable
-    connection_str = cfg.connection_str
+    credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
     # access a container using connection string
-    bs_client = BlobServiceClient.from_connection_string(connection_str)
-    # set container name
-    cont_name = cfg.cont_name
-    blob_name = cfg.blob_name
+    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
 
     # create container by name
     try:
-        cont_client = bs_client.create_container(cont_name)
+        cont_client = bs_client.create_container(cfg.cont_name)
     except:
-        cont_client = bs_client.get_container_client(cont_name)
+        cont_client = bs_client.get_container_client(cfg.cont_name)
 
     # call to methods
-    my_key = make_key()
-    content = get_content(blob_name)
-    encrypted_data = encrypt(my_key, content)
-    upload_blob(encrypted_data, bs_client, cont_name, blob_name)
+    key_uri = get_key_uri(key_client)
+    create_encryption_scope(key_uri)
+    content = get_content(cfg.blob_name)
+    upload_blob(content, bs_client, cfg.cont_name, cfg.blob_name)

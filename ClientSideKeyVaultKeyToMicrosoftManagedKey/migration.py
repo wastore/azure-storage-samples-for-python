@@ -36,14 +36,6 @@ class KeyWrapper:
         return self.kid
 
 
-def get_key_uri():
-    # get key uri from keyvault
-    e_key = key_client.get_key(cfg.keyname)
-    k_uri = str(e_key.id)
-
-    return k_uri
-
-
 def get_keyvault_key(credential, k_client):
     # if using RSA algorithm, get asymmetric key
     if "RSA" in cfg.key_wrap_algorithm:
@@ -63,20 +55,17 @@ def download_blob(blob_name, container_client):
     print("\nDownloading and decrypting blob...")
     kek = KeyWrapper(kvk, credentials)
     container_client.key_encryption_key = kek
-    decrypted_message = container_client.get_blob_client(blob_name).download_blob().content_as_bytes()
-
-    return decrypted_message
-
-
-def create_encryption_scope(k_uri):
-    # makes a microsoft managed-key encryption scope
-    print("\nCreating encryption scope...\n")
-    os.system(
-        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.SERVER_SCOPE_NAME + ' --key-source Microsoft.KeyVault --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + ' --key-uri ' + k_uri + '"')
+    decrypted_message = open("decryptedcontentfile.txt", "wb+")
+    decrypted_message.write(container_client.get_blob_client(blob_name).download_blob().content_as_bytes())
+    decrypted_message.close()
 
 
-def upload_blob(blob_service_client, cont_name, blob_name, my_message):
+def upload_blob(blob_service_client, cont_name, blob_name):
     print("\nUploading to azure as blob...")
+
+    decrypted_message = open("decryptedcontentfile.txt", "r")
+    file_content = decrypted_message.read()
+    decrypted_message.close()
 
     # determine blob type for upload
     blob_client = blob_service_client.get_blob_client(container=cont_name, blob=blob_name)
@@ -86,10 +75,10 @@ def upload_blob(blob_service_client, cont_name, blob_name, my_message):
     # upload using microsoft managed encryption-scope
     print("\nPerforming server side encryption with microsoft managed key...")
     # access container and specified blob name
-    blob_client = bs_client.get_blob_client(container=cont_name, blob=cfg.new_blob_name)
+    blob_client = bs_client.get_blob_client(container=cont_name, blob=cfg.migrated_blob_name)
     # upload contents to that blob with microsoft managed key for server side encryption
-    blob_client.upload_blob(my_message, encryption_scope=cfg.SERVER_SCOPE_NAME,
-                            blob_type=b_type)
+    blob_client.upload_blob(file_content, encryption_scope=cfg.server_managed_encryption_scope,
+                            blob_type=b_type, overwrite=True)
 
 
 if __name__ == "__main__":
@@ -104,8 +93,6 @@ if __name__ == "__main__":
     cont_client = bs_client.get_container_client(cfg.cont_name)
 
     # call to methods
-    key_uri = get_key_uri()
     kvk = get_keyvault_key(credentials, key_client)
-    message = download_blob(cfg.blob_name, cont_client)
-    create_encryption_scope(key_uri)
-    upload_blob(bs_client, cfg.cont_name, cfg.blob_name, message)
+    download_blob(cfg.blob_name, cont_client)
+    upload_blob(bs_client, cfg.cont_name, cfg.blob_name)

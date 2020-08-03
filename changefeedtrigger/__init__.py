@@ -59,6 +59,7 @@ def main(mytimer: func.TimerRequest) -> None:
     # creating clients from storage account connection string
     connection_strs = ""
 
+    # create blob service client to access connection string
     bs_client = BlobServiceClient.from_connection_string(conn_str=connection_strs)
     change_feed_client = ChangeFeedClient.from_connection_string(conn_str=connection_strs)
 

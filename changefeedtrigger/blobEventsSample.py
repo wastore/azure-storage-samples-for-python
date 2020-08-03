@@ -2,6 +2,7 @@ from azure.storage.blob import BlobServiceClient
 import azure.functions as func
 import random
 
+
 def create_event(blob_name, content, cont_client):
     index = random.randint(0,2)
     print("creating random blob events")

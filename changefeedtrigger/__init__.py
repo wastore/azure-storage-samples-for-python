@@ -57,7 +57,7 @@ def multidimensional_filtering(cf_client, b_filter, blob_client, cont_name, c_fi
 
 def main(mytimer: func.TimerRequest) -> None:
     # creating clients from storage account connection string
-    connection_strs = "DefaultEndpointsProtocol=https;AccountName=caromechangefeed;AccountKey=gSm6zQqV4WHz6D68a+FZLJldRghOucLrI6p3ebg4i58jokwFF4G/lcCoReNEaUvv8Ezhasyxw2ktlX4+akCDIw==;EndpointSuffix=core.windows.net"
+    connection_strs = ""
 
     bs_client = BlobServiceClient.from_connection_string(conn_str=connection_strs)
     change_feed_client = ChangeFeedClient.from_connection_string(conn_str=connection_strs)

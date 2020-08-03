@@ -14,7 +14,7 @@ def create_event(blob_name, content, cont_client):
 
 if __name__ == "__main__":
 
-    connection_string = "DefaultEndpointsProtocol=https;AccountName=caromechangefeed;AccountKey=gSm6zQqV4WHz6D68a+FZLJldRghOucLrI6p3ebg4i58jokwFF4G/lcCoReNEaUvv8Ezhasyxw2ktlX4+akCDIw==;EndpointSuffix=core.windows.net"
+    connection_string = ""
     container_name = "test-changefeed-container"
     blobs = ["blob1", "blob2", "blob3"]
     message = "blob content message"

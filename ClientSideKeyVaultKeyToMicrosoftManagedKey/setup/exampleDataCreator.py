@@ -63,19 +63,19 @@ def get_content(filename):
     return data
 
 
-def upload_blob(b_name, data, container_client):
+def upload_blob(b_name, data, container_client, kvk, credential):
     print("\nEncrypting blob...")
     print("\nUploading to azure as blob...")
 
     # create key encryption key using KeyWrapper()
-    kek = KeyWrapper(kvk, credentials)
+    kek = KeyWrapper(kvk, credential)
     container_client.key_encryption_key = kek
 
     # upload blob to container
     container_client.upload_blob(b_name, data, overwrite=True)
 
 
-if __name__ == "__main__":
+def main():
     # credential required to access client account
     credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
     # access keyvault client using credentials and reference to client keyvault
@@ -92,6 +92,10 @@ if __name__ == "__main__":
 
     # call to methods
     create_encryption_scope()
-    kvk = get_keyvault_key(key_client, secret_client)
+    key_vault_key = get_keyvault_key(key_client, secret_client)
     content = get_content(cfg.blob_name)
-    upload_blob(cfg.blob_name, content, cont_client)
+    upload_blob(cfg.blob_name, content, cont_client, key_vault_key, credentials)
+
+
+if __name__ == "__main__":
+    main()

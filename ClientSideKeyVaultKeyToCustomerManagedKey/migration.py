@@ -51,16 +51,16 @@ def get_keyvault_key(credential, k_client):
     return keyvault_decryption_key
 
 
-def download_blob(blob_name, container_client):
+def download_blob(blob_name, container_client, kvk, credential):
     print("\nDownloading and decrypting blob...")
-    kek = KeyWrapper(kvk, credentials)
+    kek = KeyWrapper(kvk, credential)
     container_client.key_encryption_key = kek
     decrypted_message = open("decryptedcontentfile.txt", "wb+")
     decrypted_message.write(container_client.get_blob_client(blob_name).download_blob().content_as_bytes())
     decrypted_message.close()
 
 
-def upload_blob(blob_service_client, cont_name, blob_name):
+def upload_blob(bs_client, cont_name, blob_name):
     print("\nUploading to azure as blob...")
 
     decrypted_message = open("decryptedcontentfile.txt", "r")
@@ -68,7 +68,7 @@ def upload_blob(blob_service_client, cont_name, blob_name):
     decrypted_message.close()
 
     # determine blob type for upload
-    blob_client = blob_service_client.get_blob_client(container=cont_name, blob=blob_name)
+    blob_client = bs_client.get_blob_client(container=cont_name, blob=blob_name)
     properties = blob_client.get_blob_properties()
     b_type = properties.blob_type
 
@@ -82,18 +82,23 @@ def upload_blob(blob_service_client, cont_name, blob_name):
 
     os.remove("decryptedcontentfile.txt")
 
-if __name__ == "__main__":
+
+def main():
     # credential required to access client account
     credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID,
                                          cfg.CLIENT_SECRET)
     # access keyvault key client using keyvault url and credentials
     key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
     # access blob client with connection string
-    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    blob_service_client = BlobServiceClient.from_connection_string(cfg.connection_str)
     # access container by name-- required that container already exists
-    cont_client = bs_client.get_container_client(cfg.cont_name)
+    cont_client = blob_service_client.get_container_client(cfg.cont_name)
 
     # call to methods
-    kvk = get_keyvault_key(credentials, key_client)
-    download_blob(cfg.blob_name, cont_client)
-    upload_blob(bs_client, cfg.cont_name, cfg.blob_name)
+    key_vault_key = get_keyvault_key(credentials, key_client)
+    download_blob(cfg.blob_name, cont_client, key_vault_key, credentials)
+    upload_blob(blob_service_client, cfg.cont_name, cfg.blob_name)
+
+
+if __name__ == "__main__":
+    main()

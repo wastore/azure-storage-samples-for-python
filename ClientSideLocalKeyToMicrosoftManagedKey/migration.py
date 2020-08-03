@@ -59,7 +59,7 @@ def upload_blob(filename, blob_service_client, cont_name, blob_data):
     # upload and use server side encryption with Microsoft managed key through encryption scope
     print("\nPerforming server side encryption with Microsoft Managed Key Encryption Scope...")
     # access specific container and blob
-    blob_client = bs_client.get_blob_client(container=cont_name, blob=cfg.migrated_blob_name)
+    blob_client = blob_service_client.get_blob_client(container=cont_name, blob=cfg.migrated_blob_name)
     # upload and perform server side encryption with Microsoft managed encryption scope
     blob_client.upload_blob(file_content, encryption_scope=cfg.serverside_managed_encryption_scope, blob_type=blobtype, overwrite=True)
 
@@ -68,7 +68,7 @@ def upload_blob(filename, blob_service_client, cont_name, blob_data):
     os.remove("decryptedcontentfile.txt")
 
 
-if __name__ == '__main__':
+def main():
     # credential required to access client account
     credential = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
     # access keyvault key client using keyvault url and credentials
@@ -81,3 +81,7 @@ if __name__ == '__main__':
     # call to run methods
     download_blob(cfg.blob_name, bs_client, cfg.cont_name)
     upload_blob(cfg.blob_name, bs_client, cfg.cont_name)
+
+
+if __name__ == '__main__':
+    main()

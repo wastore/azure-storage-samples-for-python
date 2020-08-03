@@ -51,7 +51,7 @@ def upload_blob(data, blob_service_client, container_name, b_name):
     blob_client.upload_blob(data, overwrite=True)
 
 
-if __name__ == "__main__":
+def main():
     credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
     # access a container using connection string
     bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
@@ -66,3 +66,7 @@ if __name__ == "__main__":
     # call to methods
     content = get_content(cfg.blob_name)
     upload_blob(content, bs_client, cfg.cont_name, cfg.blob_name)
+
+
+if __name__ == "__main__":
+    main()

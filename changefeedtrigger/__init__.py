@@ -70,9 +70,14 @@ def main(mytimer: func.TimerRequest) -> None:
     except:
         cont_client = bs_client.get_container_client(container_name)
 
-    event_filter = "BlobSnapshotCreated"
-    container_filter = "testingchangefeed2"
-    blob_filter = "IMG_8746.JPG"
+    # these are the filters being used to filter out specific events
+    # these values represent what event characteristics you want to see
+    # for example, these filters will only return events with the event
+    # type of BlobCreated, and are in the container 
+    # testing-changefeed-container, and that are named blob2
+    event_filter = "BlobCreated"
+    container_filter = "testing-changefeed-container"
+    blob_filter = "blob2"
 
     # filtering method
     events = multidimensional_filtering(change_feed_client, blob_filter, bs_client, container_name, container_filter, event_filter)

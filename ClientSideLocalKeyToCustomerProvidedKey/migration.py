@@ -1,9 +1,23 @@
 import os
-from ClientSideLocalKeyToCustomerProvidedKey.setup import config as cfg
+from ClientSideLocalKeyToCustomerProvidedKey.exampleDataCreator import config as cfg
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys import KeyClient
-from cryptography.fernet import Fernet
+
+
+def main():
+    # credential required to access client account
+    credential = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
+    # access keyvault key client using keyvault url and credentials
+    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credential)
+    # use connection string to access client account
+    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    # access your container-- this container must already exist to run this program
+    cont_client = bs_client.get_container_client(cfg.cont_name)
+
+    # call to run methods
+    download_blob(cfg.blob_name, bs_client, cfg.cont_name)
+    upload_blob(cfg.blob_name, bs_client, cfg.cont_name)
 
 
 class KeyWrapper:
@@ -66,21 +80,6 @@ def upload_blob(filename, blob_service_client, cont_name, blob_data):
     print("\nBlob uploaded to Azure Storage Account.")
 
     os.remove("decryptedcontentfile.txt")
-
-
-def main():
-    # credential required to access client account
-    credential = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
-    # access keyvault key client using keyvault url and credentials
-    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credential)
-    # use connection string to access client account
-    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
-    # access your container-- this container must already exist to run this program
-    cont_client = bs_client.get_container_client(cfg.cont_name)
-
-    # call to run methods
-    download_blob(cfg.blob_name, bs_client, cfg.cont_name)
-    upload_blob(cfg.blob_name, bs_client, cfg.cont_name)
 
 
 if __name__ == '__main__':

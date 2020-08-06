@@ -1,8 +1,27 @@
 import os
 from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient
-from ClientSideLocalKeyToCustomerManagedKey.setup import config as cfg
+from ClientSideLocalKeyToCustomerManagedKey.exampleDataCreator import config as cfg
 from azure.identity import ClientSecretCredential
+
+
+def main():
+    credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
+    # access a container using connection string
+    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
+
+    # create container by name
+    try:
+        cont_client = bs_client.create_container(cfg.cont_name)
+    except:
+        cont_client = bs_client.get_container_client(cfg.cont_name)
+
+    # call to methods
+    key_uri = get_key_uri(key_client)
+    create_encryption_scope(key_uri)
+    content = get_content(cfg.blob_name)
+    upload_blob(content, bs_client, cfg.cont_name, cfg.blob_name)
 
 
 class KeyWrapper:
@@ -64,25 +83,6 @@ def upload_blob(data, blob_service_client, container_name, b_name):
     print("\nEncrypting blob on server...")
 
     blob_client.upload_blob(data, overwrite=True)
-
-
-def main():
-    credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
-    # access a container using connection string
-    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
-    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
-
-    # create container by name
-    try:
-        cont_client = bs_client.create_container(cfg.cont_name)
-    except:
-        cont_client = bs_client.get_container_client(cfg.cont_name)
-
-    # call to methods
-    key_uri = get_key_uri(key_client)
-    create_encryption_scope(key_uri)
-    content = get_content(cfg.blob_name)
-    upload_blob(content, bs_client, cfg.cont_name, cfg.blob_name)
 
 
 if __name__ == "__main__":

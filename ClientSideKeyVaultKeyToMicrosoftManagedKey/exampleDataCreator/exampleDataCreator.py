@@ -4,8 +4,30 @@ from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient, KeyVaultKey, KeyType
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys.crypto import CryptographyClient
-from ClientSideKeyVaultKeyToCustomerManagedKey.setup import config as cfg
+from ClientSideKeyVaultKeyToMicrosoftManagedKey.exampleDataCreator import config as cfg
 from azure.keyvault.secrets import SecretClient
+
+
+def main():
+    # credential required to access client account
+    credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
+    # access keyvault client using credentials and reference to client keyvault
+    # access blob service client using connection string as reference
+    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
+    secret_client = SecretClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
+
+    # create or get container
+    try:
+        cont_client = bs_client.create_container(cfg.cont_name)
+    except:
+        cont_client = bs_client.get_container_client(cfg.cont_name)
+
+    # call to methods
+    create_encryption_scope()
+    key_vault_key = get_keyvault_key(key_client, secret_client)
+    content = get_content(cfg.blob_name)
+    upload_blob(cfg.blob_name, content, cont_client, key_vault_key, credentials)
 
 
 class KeyWrapper:
@@ -36,19 +58,11 @@ class KeyWrapper:
         return self.kid
 
 
-def get_key_uri(k_client):
-    # get key uri from keyvault
-    e_key = k_client.get_key(cfg.serverside_encryption_keyname)
-    k_uri = str(e_key.id)
-
-    return k_uri
-
-
-def create_encryption_scope(k_uri):
-    # makes a customer managed-key encryption scope
-    print("\nCreating encryption scope...\n")
+def create_encryption_scope():
+    # makes a Microsoft managed-key encryption scope
+    print("\nCreating Microsoft Managed Key Encryption Scope...\n")
     os.system(
-        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.customer_managed_encryption_scope + ' --key-source Microsoft.KeyVault --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + ' --key-uri ' + k_uri + '"')
+        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.server_managed_encryption_scope + ' --key-source Microsoft.Storage --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + '"')
 
 
 def get_keyvault_key(k_client, s_client):
@@ -81,28 +95,6 @@ def upload_blob(b_name, data, container_client, kvk, credential):
 
     # upload blob to container
     container_client.upload_blob(b_name, data, overwrite=True)
-
-def main():
-    # credential required to access client account
-    credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
-    # access keyvault client using credentials and reference to client keyvault
-    # access blob service client using connection string as reference
-    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
-    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
-    secret_client = SecretClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
-
-    # create or get container
-    try:
-        cont_client = bs_client.create_container(cfg.cont_name)
-    except:
-        cont_client = bs_client.get_container_client(cfg.cont_name)
-
-    # call to methods
-    key_uri = get_key_uri(key_client)
-    create_encryption_scope(key_uri)
-    key_vault_key = get_keyvault_key(key_client, secret_client)
-    content = get_content(cfg.blob_name)
-    upload_blob(cfg.blob_name, content, cont_client, key_vault_key, credentials)
 
 
 if __name__ == "__main__":

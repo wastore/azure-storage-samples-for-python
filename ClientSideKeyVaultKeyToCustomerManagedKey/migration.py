@@ -4,8 +4,25 @@ from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient, KeyVaultKey, KeyType
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys.crypto import CryptographyClient
-from ClientSideKeyVaultKeyToCustomerManagedKey.setup import config as cfg
+from ClientSideKeyVaultKeyToCustomerManagedKey.exampleDataCreator import config as cfg
 from azure.keyvault.secrets import SecretClient
+
+
+def main():
+    # credential required to access client account
+    credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID,
+                                         cfg.CLIENT_SECRET)
+    # access keyvault key client using keyvault url and credentials
+    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
+    # access blob client with connection string
+    blob_service_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    # access container by name-- required that container already exists
+    cont_client = blob_service_client.get_container_client(cfg.cont_name)
+
+    # call to methods
+    key_vault_key = get_keyvault_key(credentials, key_client)
+    download_blob(cfg.blob_name, cont_client, key_vault_key, credentials)
+    upload_blob(blob_service_client, cfg.cont_name, cfg.blob_name)
 
 
 class KeyWrapper:
@@ -81,23 +98,6 @@ def upload_blob(bs_client, cont_name, blob_name):
                             blob_type=b_type, overwrite=True)
 
     os.remove("decryptedcontentfile.txt")
-
-
-def main():
-    # credential required to access client account
-    credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID,
-                                         cfg.CLIENT_SECRET)
-    # access keyvault key client using keyvault url and credentials
-    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
-    # access blob client with connection string
-    blob_service_client = BlobServiceClient.from_connection_string(cfg.connection_str)
-    # access container by name-- required that container already exists
-    cont_client = blob_service_client.get_container_client(cfg.cont_name)
-
-    # call to methods
-    key_vault_key = get_keyvault_key(credentials, key_client)
-    download_blob(cfg.blob_name, cont_client, key_vault_key, credentials)
-    upload_blob(blob_service_client, cfg.cont_name, cfg.blob_name)
 
 
 if __name__ == "__main__":

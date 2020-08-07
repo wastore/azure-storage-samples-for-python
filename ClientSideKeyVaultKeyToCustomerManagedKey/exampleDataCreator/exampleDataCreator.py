@@ -4,7 +4,7 @@ from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient, KeyVaultKey, KeyType
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys.crypto import CryptographyClient
-from ClientSideKeyVaultKeyToCustomerManagedKey.exampleDataCreator import config as cfg
+from ClientSideKeyVaultKeyToCustomerManagedKey import config as cfg
 from azure.keyvault.secrets import SecretClient
 
 

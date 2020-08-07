@@ -1,6 +1,8 @@
 import base64
-from ClientSideKeyVaultKeyToCustomerProvidedKey.exampleDataCreator import config as cfg
-from azure.keyvault.keys.crypto import CryptographyClient, KeyWrapAlgorithm
+import os
+
+from ClientSideKeyVaultKeyToCustomerProvidedKey import config as cfg
+from azure.keyvault.keys.crypto import CryptographyClient
 from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient, KeyVaultKey, KeyType
 from azure.identity import ClientSecretCredential
@@ -94,6 +96,8 @@ def upload_blob(blob_service_client, cont_name, blob_name):
     # upload contents to that blob with customer provided key for server side encryption
     blob_client.upload_blob(file_content, cpk=cfg.customer_key,
                             blob_type=b_type, overwrite=True)
+
+    os.remove("decryptedcontentfile.txt")
 
 
 if __name__ == "__main__":

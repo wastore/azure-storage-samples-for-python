@@ -2,8 +2,8 @@ import base64
 from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient, KeyVaultKey, KeyType
 from azure.identity import ClientSecretCredential
-from azure.keyvault.keys.crypto import CryptographyClient, KeyWrapAlgorithm
-from ClientSideKeyVaultKeyToCustomerProvidedKey.exampleDataCreator import config as cfg
+from azure.keyvault.keys.crypto import CryptographyClient
+from ClientSideKeyVaultKeyToCustomerProvidedKey import config as cfg
 from azure.keyvault.secrets import SecretClient
 
 

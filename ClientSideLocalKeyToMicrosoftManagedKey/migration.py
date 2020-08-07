@@ -1,5 +1,5 @@
 import os
-from ClientSideLocalKeyToMicrosoftManagedKey.exampleDataCreator import config as cfg
+from ClientSideLocalKeyToMicrosoftManagedKey import config as cfg
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys import KeyClient

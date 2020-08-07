@@ -11,39 +11,39 @@ def main():
     # credential required to access client account
     credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
     # access blob service client using connection string as reference
-    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    bs_client = BlobServiceClient.from_connection_string(cfg.CONNECTION_STRING)
     key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
     secret_client = SecretClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
 
     # create or get container
     try:
-        cont_client = bs_client.create_container(cfg.cont_name)
+        cont_client = bs_client.create_container(cfg.CONTAINER_NAME)
     except:
-        cont_client = bs_client.get_container_client(cfg.cont_name)
+        cont_client = bs_client.get_container_client(cfg.CONTAINER_NAME)
 
     # call to methods
     key_vault_key = get_keyvault_key(key_client, secret_client)
-    content = get_content(cfg.blob_name)
-    upload_blob(cfg.blob_name, content, cont_client, key_vault_key, credentials)
+    content = get_content(cfg.BLOB_NAME)
+    upload_blob(cfg.BLOB_NAME, content, cont_client, key_vault_key, credentials)
 
 
 class KeyWrapper:
     # key wrap algorithm for kek
 
     def __init__(self, kek, credential):
-        self.algorithm = cfg.key_wrap_algorithm
+        self.algorithm = cfg.CLIENT_SIDE_KEY_WRAP_ALGORITHM
         self.kek = kek
         self.kid = kek.id
         self.client = CryptographyClient(kek, credential)
 
     def wrap_key(self, key):
-        if self.algorithm != cfg.key_wrap_algorithm:
+        if self.algorithm != cfg.CLIENT_SIDE_KEY_WRAP_ALGORITHM:
             raise ValueError('Unknown key wrap algorithm. {}'.format(self.algorithm))
         wrapped = self.client.wrap_key(key=key, algorithm=self.algorithm)
         return wrapped.encrypted_key
 
     def unwrap_key(self, key, _):
-        if self.algorithm != cfg.key_wrap_algorithm:
+        if self.algorithm != cfg.CLIENT_SIDE_KEY_WRAP_ALGORITHM:
             raise ValueError('Unknown key wrap algorithm. {}'.format(self.algorithm))
         unwrapped = self.client.unwrap_key(encrypted_key=key, algorithm=self.algorithm)
         return unwrapped.key
@@ -57,11 +57,11 @@ class KeyWrapper:
 
 def get_keyvault_key(k_client, s_client):
     # if using RSA algorithm, get asymmetric key
-    if "RSA" in cfg.key_wrap_algorithm:
-        keyvault_key = k_client.get_key(cfg.keyname)
+    if "RSA" in cfg.CLIENT_SIDE_KEY_WRAP_ALGORITHM:
+        keyvault_key = k_client.get_key(cfg.CLIENT_SIDE_KEYNAME)
     # if using AES algorithm, get symmetric key
     else:
-        secret = s_client.get_secret(cfg.secret)
+        secret = s_client.get_secret(cfg.KEYVAULT_SECRET)
         key_bytes = base64.urlsafe_b64decode(secret.value)
         keyvault_key = KeyVaultKey(key_id=secret.id, key_ops=["unwrapKey", "wrapKey"], k=key_bytes, kty=KeyType.oct)
 
@@ -84,7 +84,7 @@ def upload_blob(b_name, data, container_client, kvk, credential):
     container_client.key_encryption_key = kek
 
     # upload blob to container
-    container_client.upload_blob(b_name, data, overwrite=cfg.overwriter)
+    container_client.upload_blob(b_name, data, overwrite=cfg.OVERWRITER)
 
 
 if __name__ == "__main__":

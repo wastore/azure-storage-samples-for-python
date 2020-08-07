@@ -15,33 +15,33 @@ def main():
     # access keyvault key client using keyvault url and credentials
     key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
     # access blob client with connection string
-    blob_service_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    blob_service_client = BlobServiceClient.from_connection_string(cfg.CONNECTION_STRING)
     # access container by name-- required that container already exists
-    cont_client = blob_service_client.get_container_client(cfg.cont_name)
+    cont_client = blob_service_client.get_container_client(cfg.CONTAINER_NAME)
 
     # call to methods
     key_vault_key = get_keyvault_key(credentials, key_client)
-    download_blob(cfg.blob_name, cont_client, key_vault_key, credentials)
-    upload_blob(blob_service_client, cfg.cont_name, cfg.blob_name)
+    download_blob(cfg.BLOB_NAME, cont_client, key_vault_key, credentials)
+    upload_blob(blob_service_client, cfg.CONTAINER_NAME, cfg.BLOB_NAME)
 
 
 class KeyWrapper:
     # key wrap algorithm for kek
 
     def __init__(self, kek, credential):
-        self.algorithm = cfg.key_wrap_algorithm
+        self.algorithm = cfg.KEY_WRAP_ALGORITHM
         self.kek = kek
         self.kid = kek.id
         self.client = CryptographyClient(kek, credential)
 
     def wrap_key(self, key):
-        if self.algorithm != cfg.key_wrap_algorithm:
+        if self.algorithm != cfg.KEY_WRAP_ALGORITHM:
             raise ValueError('Unknown key wrap algorithm. {}'.format(self.algorithm))
         wrapped = self.client.wrap_key(key=key, algorithm=self.algorithm)
         return wrapped.encrypted_key
 
     def unwrap_key(self, key, _):
-        if self.algorithm != cfg.key_wrap_algorithm:
+        if self.algorithm != cfg.KEY_WRAP_ALGORITHM:
             raise ValueError('Unknown key wrap algorithm. {}'.format(self.algorithm))
         unwrapped = self.client.unwrap_key(encrypted_key=key, algorithm=self.algorithm)
         return unwrapped.key
@@ -55,13 +55,13 @@ class KeyWrapper:
 
 def get_keyvault_key(credential, k_client):
     # if using RSA algorithm, get asymmetric key
-    if "RSA" in cfg.key_wrap_algorithm:
-        keyvault_decryption_key = k_client.get_key(cfg.keyname)
+    if "RSA" in cfg.KEY_WRAP_ALGORITHM:
+        keyvault_decryption_key = k_client.get_key(cfg.CLIENT_SIDE_KEYNAME)
     # if using AES algorithm, get symmetric key
     else:
         secret_client = SecretClient(vault_url=cfg.KEYVAULT_URL, credential=credential)
 
-        secret = secret_client.get_secret(cfg.secret)
+        secret = secret_client.get_secret(cfg.KEYVAULT_SECRET)
         key_bytes = base64.urlsafe_b64decode(secret.value)
         keyvault_decryption_key = KeyVaultKey(key_id=secret.id, key_ops=["unwrapKey", "wrapKey"], k=key_bytes, kty=KeyType.oct)
 
@@ -87,11 +87,11 @@ def upload_blob(bs_client, cont_name, blob_name):
     # upload using customer managed encryption-scope
     print("\nPerforming server side encryption with customer managed key...")
     # access container and specified blob name
-    blob_client = bs_client.get_blob_client(container=cont_name, blob=cfg.migrated_blob_name)
+    blob_client = bs_client.get_blob_client(container=cont_name, blob=cfg.MIGRATED_BLOB_NAME)
     # upload contents to that blob with customer managed key for server side encryption
     with open("decryptedcontentfile.txt", "rb") as stream:
-        blob_client.upload_blob(stream, encryption_scope=cfg.customer_managed_encryption_scope,
-                                       blob_type=b_type, overwrite=cfg.overwriter)
+        blob_client.upload_blob(stream, encryption_scope=cfg.CUSTOMER_MANAGED_ENCRYPTION_SCOPE,
+                                blob_type=b_type, overwrite=cfg.OVERWRITER)
 
     os.remove("decryptedcontentfile.txt")
 

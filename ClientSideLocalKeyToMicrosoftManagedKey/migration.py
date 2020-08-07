@@ -1,30 +1,24 @@
 import os
 from ClientSideLocalKeyToMicrosoftManagedKey import config as cfg
 from azure.storage.blob import BlobServiceClient
-from azure.identity import ClientSecretCredential
-from azure.keyvault.keys import KeyClient
 
 
 def main():
-    # credential required to access client account
-    credential = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
-    # access keyvault key client using keyvault url and credentials
-    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credential)
     # use connection string to access client account
-    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    bs_client = BlobServiceClient.from_connection_string(cfg.CONNECTION_STRING)
     # access your container-- this container must already exist to run this program
-    cont_client = bs_client.get_container_client(cfg.cont_name)
+    bs_client.get_container_client(cfg.CONTAINER_NAME)
 
     # call to run methods
-    download_blob(cfg.blob_name, bs_client, cfg.cont_name)
-    upload_blob(cfg.blob_name, bs_client, cfg.cont_name)
+    download_blob(cfg.BLOB_NAME, bs_client, cfg.CONTAINER_NAME)
+    upload_blob(cfg.BLOB_NAME, bs_client, cfg.CONTAINER_NAME)
 
 
 class KeyWrapper:
     # key wrap algorithm for kek
 
     def __init__(self, kek):
-        self.algorithm = cfg.key_wrap_algorithm
+        self.algorithm = cfg.KEY_WRAP_ALGORITHM
         self.kek = kek
         self.kid = kek
 
@@ -47,7 +41,7 @@ class KeyWrapper:
 
 def download_blob(filename, blob_service_client, cont_name):
     # download encrypted blob from azure storage
-    kek = KeyWrapper(cfg.local_key)
+    kek = KeyWrapper(cfg.LOCAL_KEY_VALUE)
     # access specific container and blob with blob client
     blob_client = blob_service_client.get_blob_client(container=cont_name, blob=filename)
     blob_client.key_encryption_key = kek
@@ -68,10 +62,10 @@ def upload_blob(filename, blob_service_client, cont_name, blob_data):
     # upload and use server side encryption with Microsoft managed key through encryption scope
     print("\nPerforming server side encryption with Microsoft Managed Key Encryption Scope...")
     # access specific container and blob
-    blob_client = blob_service_client.get_blob_client(container=cont_name, blob=cfg.migrated_blob_name)
+    blob_client = blob_service_client.get_blob_client(container=cont_name, blob=cfg.MIGRATED_BLOB_NAME)
     # upload and perform server side encryption with Microsoft managed encryption scope
     with open("decryptedcontentfile.txt", "rb") as stream:
-        blob_client.upload_blob(stream, encryption_scope=cfg.serverside_managed_encryption_scope, blob_type=blobtype, overwrite=cfg.overwriter)
+        blob_client.upload_blob(stream, encryption_scope=cfg.SERVER_MANAGED_ENCRYPTION_SCOPE, blob_type=blobtype, overwrite=cfg.OVERWRITER)
 
     print("\nBlob uploaded to Azure Storage Account.")
 

@@ -8,27 +8,27 @@ from azure.identity import ClientSecretCredential
 def main():
     credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID, cfg.CLIENT_SECRET)
     # access a container using connection string
-    bs_client = BlobServiceClient.from_connection_string(cfg.connection_str)
+    bs_client = BlobServiceClient.from_connection_string(cfg.CONNECTION_STRING)
     key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
 
     # create container by name
     try:
-        cont_client = bs_client.create_container(cfg.cont_name)
+        bs_client.create_container(cfg.CONTAINER_NAME)
     except:
-        cont_client = bs_client.get_container_client(cfg.cont_name)
+        bs_client.get_container_client(cfg.CONTAINER_NAME)
 
     # call to methods
     key_uri = get_key_uri(key_client)
     create_encryption_scope(key_uri)
-    content = get_content(cfg.blob_name)
-    upload_blob(content, bs_client, cfg.cont_name, cfg.blob_name)
+    content = get_content(cfg.BLOB_NAME)
+    upload_blob(content, bs_client, cfg.CONTAINER_NAME, cfg.BLOB_NAME)
 
 
 class KeyWrapper:
     # REPLACE WITH YOUR PREFERRED KEYWRAPPING ALGORITHMS AND METHODS
 
     def __init__(self, kek):
-        self.algorithm = cfg.key_wrap_algorithm
+        self.algorithm = cfg.KEY_WRAP_ALGORITHM
         self.kek = kek
         self.kid = kek
 
@@ -51,7 +51,7 @@ class KeyWrapper:
 
 def get_key_uri(k_client):
     # this method gets a customer managed keyvault key to make encryption scope for server side encryption
-    keyvault_key = k_client.get_key(cfg.serverside_encryption_keyname)
+    keyvault_key = k_client.get_key(cfg.SERVER_SIDE_KEYNAME)
     # get key_uri for encryption scope
     k_uri = str(keyvault_key.id)
 
@@ -61,7 +61,7 @@ def get_key_uri(k_client):
 def create_encryption_scope(k_uri):
     print("\nCreating Customer Managed Key Encryption Scope...\n")
     os.system(
-        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.customer_managed_encryption_scope + ' --key-source Microsoft.KeyVault --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUB_ID + ' --key-uri ' + k_uri + '"')
+        'cmd /c "az storage account encryption-scope create --account-name ' + cfg.STORAGE_ACCOUNT + ' --name ' + cfg.CUSTOMER_MANAGED_ENCRYPTION_SCOPE + ' --key-source Microsoft.KeyVault --resource-group ' + cfg.RESOURCE_GROUP + ' --subscription ' + cfg.SUBSCRIPTION_ID + ' --key-uri ' + k_uri + '"')
 
 
 def get_content(filename):
@@ -73,7 +73,7 @@ def get_content(filename):
 
 def upload_blob(data, blob_service_client, container_name, b_name):
     # upload encrypted content to Azure storage
-    kek = KeyWrapper(cfg.local_key)
+    kek = KeyWrapper(cfg.LOCAL_KEY_VALUE)
 
     # access specific container and blob with blob client
     blob_client = blob_service_client.get_blob_client(container=container_name, blob=b_name)
@@ -82,7 +82,7 @@ def upload_blob(data, blob_service_client, container_name, b_name):
     print("\nUploading blob to Azure Storage...")
     print("\nEncrypting blob on server...")
 
-    blob_client.upload_blob(data, overwrite=cfg.overwriter)
+    blob_client.upload_blob(data, overwrite=cfg.OVERWRITER)
 
 
 if __name__ == "__main__":

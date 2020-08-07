@@ -11,6 +11,7 @@ from predicate import where
 #!!!TODO: values to fill in:
 
 # creating clients from storage account connection string
+# make sure connection string is also in local.settings.json
 connection_strs = ""
 
 # these are the filters being used to filter out specific events

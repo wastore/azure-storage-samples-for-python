@@ -1,15 +1,18 @@
 from azure.storage.blob import BlobServiceClient
 import random
 import time
+from .settings import *
+
+# The purpose of this file is to randomly generate changefeed events, either BlobCreated or BlobDeleted
+# This file is not required to run the changefeedSample.py
 
 
 def main():
-    connection_string = ""
     container_name = "test-changefeed-container"
     blobs = ["blob1", "blob2", "blob3"]
     message = "Lorem ipsum"
 
-    blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+    blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
 
     try:
         container_client = blob_service_client.create_container(container_name)

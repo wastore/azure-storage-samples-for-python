@@ -2,9 +2,15 @@
 The purpose of this sample is to create a log of all new events that occur in a storage account with multidimensional filtering that runs on a timer using an Azure Function
 
 ## Prerequisites
-An Azure Storage Account
+[An Azure Subscription](https://azure.microsoft.com/en-us/free/)
 
-An Timer Trigger Azure Function
+[An Azure Storage Account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal)
+
+[A Timer Trigger Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-scheduled-function#:~:text=Create%20a%20timer%20triggered%20function%201%20Expand%20your,by%20viewing%20trace%20information%20written%20to%20the%20logs.)
+
+[Visual Studio Code](https://visualstudio.microsoft.com/downloads/)
+
+[Python 3.6 or above](https://www.python.org/downloads/)
 
 ## How to Use
 This sample includes an __init__.py file as the main program, a function.json to configure the timer trigger function, and a blobEventsSample.py file that represents a data creation sample by creating events to test the program on.
@@ -31,7 +37,7 @@ Python does not allow for creating function within the portal, so that function 
 5. Wait for function to successfully deploy to your function app
 
 ### Run the Function
-1. In Visual Studio Code press F5 to run the function locally
+1. In Visual Studio Code press F5 to run the function locally, this requires having Azure Functions Core Tools installed.
 
 or
 

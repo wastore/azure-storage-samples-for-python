@@ -21,3 +21,6 @@ key_wrap_algorithm = KeyWrapAlgorithm.rsa1_5 #.rsa_oaep, .rsa_oaep_256, .rsa1_5,
 cont_name = "client-side-keyvault-key-to-microsoft-managed-key"
 blob_name = "blobExample.txt"
 migrated_blob_name = "mmk-" + blob_name
+
+# if user wants overwrite to be available, change to True
+overwriter = False

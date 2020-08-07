@@ -72,7 +72,7 @@ def upload_blob(data, blob_service_client, container_name, b_name):
     print("\nUploading blob to Azure Storage...")
     print("\nEncrypting blob on server...")
 
-    blob_client.upload_blob(data, overwrite=True)
+    blob_client.upload_blob(data, overwrite=cfg.overwriter)
 
 
 if __name__ == "__main__":

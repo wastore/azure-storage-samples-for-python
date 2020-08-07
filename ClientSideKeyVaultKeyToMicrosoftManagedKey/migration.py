@@ -90,7 +90,7 @@ def upload_blob(blob_service_client, cont_name, blob_name):
     # upload contents to that blob with microsoft managed key for server side encryption
     with open("decryptedcontentfile.txt", "rb") as stream:
         blob_client.upload_blob(stream, encryption_scope=cfg.server_managed_encryption_scope,
-                            blob_type=b_type, overwrite=True)
+                            blob_type=b_type, overwrite=cfg.overwriter)
 
 
 if __name__ == "__main__":

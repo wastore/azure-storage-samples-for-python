@@ -103,7 +103,7 @@ def upload_blob(b_name, data, container_client, kvk, credential):
     container_client.key_encryption_key = kek
 
     # upload blob to container
-    container_client.upload_blob(b_name, data, overwrite=True)
+    container_client.upload_blob(b_name, data, overwrite=cfg.overwriter)
 
 
 if __name__ == "__main__":

@@ -26,3 +26,6 @@ key_wrap_algorithm = KeyWrapAlgorithm.rsa_oaep #.rsa_oaep, .rsa_oaep_256, .rsa1_
 cont_name = "client-side-keyvault-key-to-customer-provided-key"
 blob_name = "blobExample.txt"
 migrated_blob_name = "cpk-" + blob_name
+
+# if user wants overwrite to be available, change to True
+overwriter = False

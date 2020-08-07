@@ -24,3 +24,6 @@ blob_name = "blobExample.txt"
 local_key_name = "local-test-key"
 # here put what you want the serverside encrypted blob to be named
 migrated_blob_name = "cpk-" + blob_name
+
+# if user wants overwrite to be available, change to True
+overwriter = False

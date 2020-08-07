@@ -72,7 +72,7 @@ def upload_blob(filename, blob_service_client, cont_name):
     # upload and perform server side encryption with Microsoft managed encryption scope
     with open("decryptedcontentfile.txt", "rb") as stream:
         blob_client.upload_blob(stream, encryption_scope=cfg.customer_managed_encryption_scope, blob_type=blobtype,
-                            overwrite=True)
+                            overwrite=cfg.overwriter)
 
     print("\nBlob uploaded to Azure Storage Account.")
 

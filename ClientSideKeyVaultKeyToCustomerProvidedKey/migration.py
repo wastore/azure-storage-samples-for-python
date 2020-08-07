@@ -91,7 +91,7 @@ def upload_blob(blob_service_client, cont_name, blob_name):
     # upload contents to that blob with customer provided key for server side encryption
     with open("decryptedcontentfile.txt", "rb") as stream:
         blob_client.upload_blob(stream, cpk=cfg.customer_key,
-                            blob_type=b_type, overwrite=True)
+                            blob_type=b_type, overwrite=cfg.overwriter)
 
     os.remove("decryptedcontentfile.txt")
 

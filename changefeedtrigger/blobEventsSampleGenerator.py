@@ -1,5 +1,4 @@
 from azure.storage.blob import BlobServiceClient
-import azure.functions as func
 import random
 import time
 
@@ -25,17 +24,19 @@ def simulate_account_activity(blob_name, content, cont_client):
 
     # this method creates events at random in a container, either deleting or creating a blob
 
+    # getting random blob
     index = random.randint(0,2)
     print("creating random blob events")
     try:
         cont_client.delete_blob(blob_name[index])
     except:
+        # get new random blob
         index = random.randint(0,2)
         cont_client.upload_blob(blob_name[index], content, overwrite=True)
 
 
 if __name__ == "__main__":
-    while (True):
+    while True:
         main()
         time.sleep(2700)
 

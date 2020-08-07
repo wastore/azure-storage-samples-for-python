@@ -1,12 +1,7 @@
-import time
-import json
-from subprocess import Popen, PIPE
 from azure.storage.blob.changefeed import ChangeFeedClient
 from azure.storage.blob import BlobServiceClient
 import azure.functions as func
-from datetime import timedelta, datetime
 import logging
-from predicate import where
 
 #!!!TODO: values to fill in:
 
@@ -14,13 +9,15 @@ from predicate import where
 # make sure connection string is also in local.settings.json
 connection_strs = ""
 
+events_per_page_quantity = 5
+
 # these are the filters being used to filter out specific events
 # these values represent what event characteristics you want to see
 # for example, these filters will only return events with the event
 # type of BlobCreated, and are in the container 
 # testing-changefeed-container, and that are named blob2
 event_filter = "BlobCreated"
-container_filter = "testing-changefeed-container"
+container_filter = "test-changefeed-container"
 blob_filter = "blob2"
 
 # if filtering of events is unwanted, the method filter_events can be commented out and changefeed will iterate on all events
@@ -35,17 +32,14 @@ def main(mytimer: func.TimerRequest) -> None:
     # create or get container to store cursor
     container_name = "cursorstoragecontainer"
     try:
-        cont_client = blob_service_client.create_container(container_name)
+        token_container_client = blob_service_client.create_container(container_name)
     except:
-        cont_client = blob_service_client.get_container_client(container_name)
-
-    # access container with cursor
-    token_container_client = blob_service_client.get_container_client(container=container_name)
+        token_container_client = blob_service_client.get_container_client(container_name)
 
     # call to method
     cursor = get_cursor(token_container_client)
     events = get_events(cursor, token_container_client, change_feed_client)
-    #events = filter_events(events) # if filtering events is unwanted this method can be commented out
+    events = filter_events(events) # if filtering events is unwanted this method can be commented out
  
     # log filtered event output
     if len(events) == 0:
@@ -78,17 +72,12 @@ def get_events(tokens, token_client, cf_client):
     if blob_name in tokens:
         cursor = token_client.download_blob(blob_name).readall()
 
-        # if value of token is None return None
-        if cursor == b"None":
-            return []
-
-        # if value of token is a cursor initiate the changefeed with cursor
-        else:
-            change_feed = cf_client.list_changes(results_per_page=1).by_page(continuation_token=eval(cursor))
+        # initiate the changefeed with cursor
+        change_feed = cf_client.list_changes(results_per_page=events_per_page_quantity).by_page(continuation_token=eval(cursor))
 
     # if token does not exist upload token as empty string placeholder as blob and initiate changefeed without cursor
     else: 
-        change_feed = cf_client.list_changes(results_per_page=1).by_page()
+        change_feed = cf_client.list_changes(results_per_page=events_per_page_quantity).by_page()
 
     # iterate through change feed
     change_feed_page = next(change_feed)
@@ -97,11 +86,14 @@ def get_events(tokens, token_client, cf_client):
     for event in change_feed_page:
         all_events.append(event)
 
+    # check if new iteration reaches end of events
+    if change_feed.continuation_token is None:
+        logging.info("\nNo new matching events... program will output last set of matching events until new events are added...")
     # set continuation token as last event in the filtered event list
-    cursor = change_feed.continuation_token
-    
-    # update continuation token blob with new continuation token
-    token_client.upload_blob(blob_name, str(cursor), overwrite=True)
+    else:
+        cursor = change_feed.continuation_token
+        # update continuation token blob with new continuation token
+        token_client.upload_blob(blob_name, str(cursor), overwrite=True)
 
     return all_events
 

@@ -1,5 +1,0 @@
-azure-functions==1.3.0
-DateTime==4.3
-azure-storage-blob==12.4.0b1
-azure-storage-blob-changefeed==12.0.0b1
-predicate==0.3.0

@@ -1,4 +1,4 @@
-CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=changefeedtester;AccountKey=u9JE+P4QTyakAUmsCawmMtxXiCTbnKUoPjglZ3kn2sq203bvasVZSTqaIEyVJyxfYi9mhAV5va3LHX0ALImHvA==;EndpointSuffix=core.windows.net"
+CONNECTION_STRING = ""
 
 EVENTS_PER_PAGE_QUANTITY = 5
 

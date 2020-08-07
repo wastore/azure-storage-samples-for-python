@@ -108,14 +108,12 @@ def get_events(tokens, token_client, cf_client):
 
 def filter_events(events):
     # this method filters the changefeed events
-    
+
     # get multidimensionally filtered events
     filtered_events = []
     for event in events:
         if (event["eventType"] == event_filter) and (("/" + container_filter + "/") in event["subject"]) and (("/" + blob_filter) in event["subject"]):
-            filtered_events.append(event)
-
-        
+            filtered_events.append(event) 
 
     # return filtered events
     return filtered_events

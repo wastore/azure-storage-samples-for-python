@@ -14,9 +14,9 @@ STORAGE_ACCOUNT = ""
 
 # replace with name for customer managed encryption scope
 customer_managed_encryption_scope = "test-customer-scope"
-keyname = ""
-serverside_encryption_keyname = ""
-secret = ""
+keyname = "testkey1"
+serverside_encryption_keyname = "testkey2"
+secret = "sample-secret"
 key_wrap_algorithm = KeyWrapAlgorithm.rsa1_5 #.rsa_oaep, .rsa_oaep_256, .rsa1_5, .aes_256
 
 cont_name = "client-side-keyvault-key-to-customer-managed-key"

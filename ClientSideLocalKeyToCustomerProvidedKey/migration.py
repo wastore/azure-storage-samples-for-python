@@ -53,17 +53,12 @@ def download_blob(filename, blob_service_client, cont_name):
     blob_client.key_encryption_key = kek
     print("\nReading blob from Azure Storage...")
     # write encrypted contents of blob to a file
-    decrypted_message = open("decryptedcontentfile.txt", "wb+")
-    decrypted_message.write(blob_client.download_blob().content_as_bytes())
-    decrypted_message.close()
+    with open("decryptedcontentfile.txt", "wb+") as stream:
+        blob_client.download_blob().readinto(stream)
 
 
-def upload_blob(filename, blob_service_client, cont_name, blob_data):
+def upload_blob(filename, blob_service_client, cont_name):
     # upload decrypted blob back to azure storage and perform server side encryption
-    # determine the blob type for upload
-    decrypted_message = open("decryptedcontentfile.txt", "r")
-    file_content = decrypted_message.read()
-    decrypted_message.close()
 
     # determine the blob type for upload
     blob_client = blob_service_client.get_blob_client(container=cont_name, blob=filename)
@@ -75,7 +70,8 @@ def upload_blob(filename, blob_service_client, cont_name, blob_data):
     # access specific container and blob
     blob_client = blob_service_client.get_blob_client(container=cont_name, blob=cfg.migrated_blob_name)
     # upload and perform server side encryption with Microsoft managed encryption scope
-    blob_client.upload_blob(file_content, cpk=cfg.customer_key, blob_type=blobtype, overwrite=True)
+    with open("decryptedcontentfile.txt", "rb") as stream:
+        blob_client.upload_blob(stream, cpk=cfg.customer_key, blob_type=blobtype, overwrite=True)
 
     print("\nBlob uploaded to Azure Storage Account.")
 

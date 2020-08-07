@@ -4,7 +4,7 @@ This program functions as a migration of data in Azure Storage from client side 
 
 ## Getting Started
 ### Prerequisites
-[add other requirements here]
+Requires installation of [Python](https://www.python.org/downloads/) and [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest). Requires an [Azure subscription](https://azure.microsoft.com/en-us/free/) and an [Azure storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal).
 
 ## How to Use
 ###Setting Up the Program

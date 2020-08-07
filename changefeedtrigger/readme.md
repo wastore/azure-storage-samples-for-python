@@ -52,4 +52,4 @@ or
 
 If more help is needed reference this documentation, but note that it references creating an HTTP trigger that is created in portal, which is not a compatible function creation method with Python:
 
-https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function 
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function

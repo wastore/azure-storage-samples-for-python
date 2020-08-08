@@ -14,12 +14,18 @@ SUBSCRIPTION_ID = ""
 RESOURCE_GROUP = ""
 STORAGE_ACCOUNT = ""
 
-# replace with name for customer managed encryption scope
+# if you want program to create encryption scope, change to True. if not, it will access a preexisting
+# encryption scope with the name CUSTOMER_MANAGED_ENCRYPTION_SCOPE
+CREATE_ENCRYPTION_SCOPE = False
+# replace with name for customer managed encryption scope and key used for encryption scope
 CUSTOMER_MANAGED_ENCRYPTION_SCOPE = "test-customer-scope"
-CLIENT_SIDE_KEYNAME = "testkey1"
 SERVER_SIDE_KEYNAME = "testkey2"
+
+# CLIENT_SIDE_KEYNAME should used when wrapping key with RSA keywrap algorithm, otherwise use KEYVAULT_SECRET
 KEYVAULT_SECRET = "sample-secret"
-KEY_WRAP_ALGORITHM = KeyWrapAlgorithm.rsa1_5 #.rsa_oaep, .rsa_oaep_256, .rsa1_5, .aes_256
+CLIENT_SIDE_KEYNAME = "testkey1"
+
+KEY_WRAP_ALGORITHM = KeyWrapAlgorithm.aes_256  # .rsa_oaep, .rsa_oaep_256, .rsa1_5, .aes_256
 
 CONTAINER_NAME = "client-side-keyvault-key-to-customer-managed-key"
 BLOB_NAME = "blobExample.txt"

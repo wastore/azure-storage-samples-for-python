@@ -10,6 +10,8 @@ Requires installation of [Python](https://www.python.org/downloads/) and [Azure 
 ###Setting Up the Program
 #### exampleDataCreator.py
 In the exampleDataCreator folder, please navigate to exampleDataCreator.py for a program example of what setup you should have completed before running the main program, migration.py. In this program, that means having performed client side encryption with a local key and having had uploaded it to Azure Storage as a blob.
+
+It is not required to run this file in order to run migration.py
 ####config.py
 In the setup folder, please read through and update the config.py file with the required information before running the main program, migration.py. All of the information in the config.py file is required, or else the program will not function.
 ####migration.py

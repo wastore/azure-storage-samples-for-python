@@ -1,6 +1,7 @@
 from azure.storage.blob import CustomerProvidedEncryptionKey
+from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-# the below items are fake and need to be replaced
+# the below values are fake and need to be replaced
 
 # items to access keyvault
 KEYVAULT_URL = ""
@@ -14,18 +15,18 @@ SUBSCRIPTION_ID = ""
 RESOURCE_GROUP = ""
 STORAGE_ACCOUNT = ""
 
-# customer provided key for server side encryption
+# if using customer provided key, set values here
 CUSTOMER_PROVIDED_KEY = CustomerProvidedEncryptionKey(key_value="",
-
                                                       key_hash="")
 
-LOCAL_KEY_VALUE = "6wcF1o5QEzJJKIrH8QpR7mGjSqTP3d28ScSxV0hJ67Q="
-KEY_WRAP_ALGORITHM = "example-algorithm"
+# keyvault key used for encryption
+# CLIENT_SIDE_KEYNAME should used when wrapping key with RSA keywrap algorithm, otherwise use KEYVAULT_SECRET
+CLIENT_SIDE_KEYNAME = ""
+KEYVAULT_SECRET = ""
+CLIENT_SIDE_KEY_WRAP_ALGORITHM = KeyWrapAlgorithm.aes_256  # .rsa_oaep, .rsa_oaep_256, .rsa1_5, .aes_256
 
-CONTAINER_NAME = "client-side-local-key-to-customer-provided-key"
+CONTAINER_NAME = "client-side-keyvault-key-to-customer-provided-key"
 BLOB_NAME = "blobExample.txt"
-LOCAL_KEY_NAME = "local-test-key"
-# here put what you want the serverside encrypted blob to be named
 MIGRATED_BLOB_NAME = "cpk-" + BLOB_NAME
 
 # if user wants to overwrite blob with the same name as migrated_blob_name in the migration.py, as well as the blob_name

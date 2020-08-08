@@ -1,46 +1,51 @@
 import base64
+import os
 from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient, KeyVaultKey, KeyType
 from azure.identity import ClientSecretCredential
 from azure.keyvault.keys.crypto import CryptographyClient
-from ClientSideKeyVaultKeyToMicrosoftManagedKey import config as cfg
+from ClientSideKeyVaultKeyToMicrosoftManagedKey.settings import *
 from azure.keyvault.secrets import SecretClient
 
 
 def main():
     # credential required to access client account
-    credentials = ClientSecretCredential(cfg.TENANT_ID, cfg.CLIENT_ID,
-                                         cfg.CLIENT_SECRET)
+    credentials = ClientSecretCredential(TENANT_ID, CLIENT_ID,
+                                         CLIENT_SECRET)
     # access keyvault key client using keyvault url and credentials
-    key_client = KeyClient(vault_url=cfg.KEYVAULT_URL, credential=credentials)
+    key_client = KeyClient(vault_url=KEYVAULT_URL, credential=credentials)
     # access blob client with connection string
-    bs_client = BlobServiceClient.from_connection_string(cfg.CONNECTION_STRING)
+    bs_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     # access container by name-- required that container already exists
-    cont_client = bs_client.get_container_client(cfg.CONTAINER_NAME)
+    cont_client = bs_client.get_container_client(CONTAINER_NAME)
+
+    # create encryption scope
+    if CREATE_ENCRYPTION_SCOPE:
+        create_encryption_scope()
 
     # call to methods
     key_vault_key = get_keyvault_key(credentials, key_client)
-    download_blob(cfg.BLOB_NAME, cont_client, key_vault_key, credentials)
-    upload_blob(bs_client, cfg.CONTAINER_NAME, cfg.BLOB_NAME)
+    download_blob(BLOB_NAME, cont_client, key_vault_key, credentials)
+    upload_blob(bs_client, CONTAINER_NAME, BLOB_NAME)
 
 
 class KeyWrapper:
     # key wrap algorithm for kek
 
     def __init__(self, kek, credential):
-        self.algorithm = cfg.KEY_WRAP_ALGORITHM
+        self.algorithm = KEY_WRAP_ALGORITHM
         self.kek = kek
         self.kid = kek.id
         self.client = CryptographyClient(kek, credential)
 
     def wrap_key(self, key):
-        if self.algorithm != cfg.KEY_WRAP_ALGORITHM:
+        if self.algorithm != KEY_WRAP_ALGORITHM:
             raise ValueError('Unknown key wrap algorithm. {}'.format(self.algorithm))
         wrapped = self.client.wrap_key(key=key, algorithm=self.algorithm)
         return wrapped.encrypted_key
 
     def unwrap_key(self, key, _):
-        if self.algorithm != cfg.KEY_WRAP_ALGORITHM:
+        if self.algorithm != KEY_WRAP_ALGORITHM:
             raise ValueError('Unknown key wrap algorithm. {}'.format(self.algorithm))
         unwrapped = self.client.unwrap_key(encrypted_key=key, algorithm=self.algorithm)
         return unwrapped.key
@@ -52,15 +57,22 @@ class KeyWrapper:
         return self.kid
 
 
+def create_encryption_scope():
+    # makes a Microsoft managed-key encryption scope
+    print("\nCreating Microsoft Managed Key Encryption Scope...\n")
+    os.system(
+        'cmd /c "az storage account encryption-scope create --account-name ' + STORAGE_ACCOUNT + ' --name ' + SERVER_MANAGED_ENCRYPTION_SCOPE + ' --key-source Microsoft.Storage --resource-group ' + RESOURCE_GROUP + ' --subscription ' + SUBSCRIPTION_ID + '"')
+
+
 def get_keyvault_key(credential, k_client):
     # if using RSA algorithm, get asymmetric key
-    if "RSA" in cfg.KEY_WRAP_ALGORITHM:
-        keyvault_key = k_client.get_key(cfg.CLIENT_SIDE_KEYNAME)
+    if "RSA" in KEY_WRAP_ALGORITHM:
+        keyvault_key = k_client.get_key(CLIENT_SIDE_KEYNAME)
     # if using AES algorithm, get symmetric key
     else:
-        secret_client = SecretClient(vault_url=cfg.KEYVAULT_URL, credential=credential)
+        secret_client = SecretClient(vault_url=KEYVAULT_URL, credential=credential)
 
-        secret = secret_client.get_secret(cfg.KEYVAULT_SECRET)
+        secret = secret_client.get_secret(KEYVAULT_SECRET)
         key_bytes = base64.urlsafe_b64decode(secret.value)
         keyvault_key = KeyVaultKey(key_id=secret.id, key_ops=["unwrapKey", "wrapKey"], k=key_bytes, kty=KeyType.oct)
 
@@ -86,11 +98,13 @@ def upload_blob(blob_service_client, cont_name, blob_name):
     # upload using microsoft managed encryption-scope
     print("\nPerforming server side encryption with microsoft managed key...")
     # access container and specified blob name
-    blob_client = blob_service_client.get_blob_client(container=cont_name, blob=cfg.MIGRATED_BLOB_NAME)
+    blob_client = blob_service_client.get_blob_client(container=cont_name, blob=MIGRATED_BLOB_NAME)
     # upload contents to that blob with microsoft managed key for server side encryption
     with open("decryptedcontentfile.txt", "rb") as stream:
-        blob_client.upload_blob(stream, encryption_scope=cfg.SERVER_MANAGED_ENCRYPTION_SCOPE,
-                                blob_type=b_type, overwrite=cfg.OVERWRITER)
+        blob_client.upload_blob(stream, encryption_scope=SERVER_MANAGED_ENCRYPTION_SCOPE,
+                                blob_type=b_type, overwrite=OVERWRITER)
+
+    os.remove("decryptedcontentfile.txt")
 
 
 if __name__ == "__main__":

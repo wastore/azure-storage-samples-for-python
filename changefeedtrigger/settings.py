@@ -1,6 +1,6 @@
 CONNECTION_STRING = ""
 
-EVENTS_PER_PAGE_QUANTITY = 5
+EVENTS_PER_PAGE_QUANTITY = 500
 
 # these are the filters being used to filter out specific events
 # these values represent what event characteristics you want to see

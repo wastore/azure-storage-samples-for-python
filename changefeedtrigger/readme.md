@@ -53,3 +53,6 @@ or
 If more help is needed reference this documentation, but note that it references creating an HTTP trigger that is created in portal, which is not a compatible function creation method with Python:
 
 https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function
+
+## Viewing logs from Azure Function
+To view logs from the deployed changefeedSample program, follow [these instructions.](https://docs.microsoft.com/en-us/azure/azure-functions/functions-monitoring?tabs=cmd)

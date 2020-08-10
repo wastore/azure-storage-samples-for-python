@@ -1,4 +1,4 @@
-#Client Side Encryption to CPK-N Migration
+#Client Side Encryption to Server Side Encryption Migration
 #####Various Migration Samples From Client Side Encryption to Server Side Encryption
 
 ##General Info

@@ -84,10 +84,8 @@ def filter_events(events):
     # this method filters the changefeed events
 
     # get multidimensionally filtered events
-    filtered_events = []
-    for event in events:
-        if (event["eventType"] == EVENT_FILTER) and (("/" + CONTAINER_FILTER + "/") in event["subject"]) and (("/" + BLOB_FILTER) in event["subject"]):
-            filtered_events.append(event) 
+    filtered_events = filter(lambda f: f["eventType"] == EVENT_FILTER and ("/" + CONTAINER_FILTER + "/") in f["subject"] and ("/" + BLOB_FILTER) in f["subject"], events)
 
     # return filtered events
-    return filtered_events
+    return list(filtered_events)
+    

@@ -18,7 +18,7 @@ CREATE_ENCRYPTION_SCOPE = False
 # replace with name for customer managed encryption scope
 # this will be made automatically in the main program, so just insert what you want the name to be
 CUSTOMER_MANAGED_ENCRYPTION_SCOPE = "test-customer-scope"
-SERVER_SIDE_KEYNAME = "testkey1"
+SERVER_SIDE_KEYNAME = ""
 
 # this needs to be replaced with the value of the key used for local client side encryption
 LOCAL_KEY_VALUE = "6wcF1o5QEzJJKIrH8QpR7mGjSqTP3d28ScSxV0hJ67Q="

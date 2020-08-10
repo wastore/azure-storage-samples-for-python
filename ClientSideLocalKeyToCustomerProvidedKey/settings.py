@@ -19,6 +19,7 @@ CUSTOMER_PROVIDED_KEY = CustomerProvidedEncryptionKey(key_value="",
 
                                                       key_hash="")
 
+# replace these with your local key value and algorithm
 LOCAL_KEY_VALUE = "6wcF1o5QEzJJKIrH8QpR7mGjSqTP3d28ScSxV0hJ67Q="
 KEY_WRAP_ALGORITHM = "example-algorithm"
 

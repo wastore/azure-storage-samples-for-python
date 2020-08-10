@@ -18,12 +18,12 @@ STORAGE_ACCOUNT = ""
 # encryption scope with the name CUSTOMER_MANAGED_ENCRYPTION_SCOPE
 CREATE_ENCRYPTION_SCOPE = False
 # replace with name for customer managed encryption scope and key used for encryption scope
-CUSTOMER_MANAGED_ENCRYPTION_SCOPE = "test-customer-scope"
-SERVER_SIDE_KEYNAME = "testkey2"
+CUSTOMER_MANAGED_ENCRYPTION_SCOPE = ""
+SERVER_SIDE_KEYNAME = ""
 
 # CLIENT_SIDE_KEYNAME should used when wrapping key with RSA keywrap algorithm, otherwise use KEYVAULT_SECRET
-KEYVAULT_SECRET = "sample-secret"
-CLIENT_SIDE_KEYNAME = "testkey1"
+KEYVAULT_SECRET = ""
+CLIENT_SIDE_KEYNAME = ""
 
 KEY_WRAP_ALGORITHM = KeyWrapAlgorithm.aes_256  # .rsa_oaep, .rsa_oaep_256, .rsa1_5, .aes_256
 

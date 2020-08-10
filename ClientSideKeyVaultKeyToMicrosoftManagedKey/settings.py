@@ -21,9 +21,9 @@ CREATE_ENCRYPTION_SCOPE = False
 SERVER_MANAGED_ENCRYPTION_SCOPE = "test-server-scope"
 
 # CLIENT_SIDE_KEYNAME should used when wrapping key with RSA keywrap algorithm, otherwise use KEYVAULT_SECRET
-CLIENT_SIDE_KEYNAME = "testkey1"
-KEYVAULT_SECRET = "sample-secret"
-KEY_WRAP_ALGORITHM = KeyWrapAlgorithm.rsa1_5 #.rsa_oaep, .rsa_oaep_256, .rsa1_5, .aes_256
+CLIENT_SIDE_KEYNAME = ""
+KEYVAULT_SECRET = ""
+KEY_WRAP_ALGORITHM = KeyWrapAlgorithm.aes_256 #.rsa_oaep, .rsa_oaep_256, .rsa1_5, .aes_256
 
 CONTAINER_NAME = "client-side-keyvault-key-to-microsoft-managed-key"
 BLOB_NAME = "blobExample.txt"

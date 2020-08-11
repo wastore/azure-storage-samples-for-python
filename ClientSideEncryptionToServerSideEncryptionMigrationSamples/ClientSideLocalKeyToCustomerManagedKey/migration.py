@@ -1,4 +1,4 @@
-from ClientSideLocalKeyToCustomerManagedKey.settings import *
+from ClientSideEncryptionToServerSideEncryptionMigrationSamples.ClientSideLocalKeyToCustomerManagedKey.settings import *
 from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient
 from azure.identity import ClientSecretCredential

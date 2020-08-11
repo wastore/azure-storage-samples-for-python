@@ -1,6 +1,6 @@
 import base64
 import os
-from ClientSideKeyVaultKeyToCustomerProvidedKey.settings import *
+from ClientSideEncryptionToServerSideEncryptionMigrationSamples.ClientSideKeyVaultKeyToCustomerProvidedKey.settings import *
 from azure.keyvault.keys.crypto import CryptographyClient
 from azure.storage.blob import BlobServiceClient
 from azure.keyvault.keys import KeyClient, KeyVaultKey, KeyType

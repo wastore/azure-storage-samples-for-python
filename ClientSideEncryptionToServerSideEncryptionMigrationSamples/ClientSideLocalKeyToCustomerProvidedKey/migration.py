@@ -1,6 +1,6 @@
 import os
+from ClientSideEncryptionToServerSideEncryptionMigrationSamples.ClientSideLocalKeyToCustomerProvidedKey.settings import *
 from azure.storage.blob import BlobServiceClient
-from ClientSideLocalKeyToMicrosoftManagedKey.settings import *
 
 
 def main():
@@ -9,19 +9,9 @@ def main():
     # access your container-- this container must already exist to run this program
     bs_client.get_container_client(CONTAINER_NAME)
 
-    # create encryption scope
-    if CREATE_ENCRYPTION_SCOPE:
-        create_encryption_scope()
-
     # call to run methods
     download_blob(BLOB_NAME, bs_client, CONTAINER_NAME)
     upload_blob(BLOB_NAME, bs_client, CONTAINER_NAME)
-
-
-def create_encryption_scope():
-    print("\nCreating Microsoft Managed Key Encryption Scope...\n")
-    os.system(
-        'cmd /c "az storage account encryption-scope create --account-name ' + STORAGE_ACCOUNT + ' --name ' + SERVER_MANAGED_ENCRYPTION_SCOPE + ' --key-source Microsoft.Storage --resource-group ' + RESOURCE_GROUP + ' --subscription ' + SUBSCRIPTION_ID + '"')
 
 
 def download_blob(filename, blob_service_client, cont_name):
@@ -44,13 +34,13 @@ def upload_blob(filename, blob_service_client, cont_name):
     properties = blob_client.get_blob_properties()
     blobtype = properties.blob_type
 
-    # upload and use server side encryption with Microsoft managed key through encryption scope
-    print("\nPerforming server side encryption with Microsoft Managed Key Encryption Scope...")
+    # upload and use server side encryption with customer provided key
+    print("\nPerforming server side encryption with customer provided key...")
     # access specific container and blob
     blob_client = blob_service_client.get_blob_client(container=cont_name, blob=MIGRATED_BLOB_NAME)
     # upload and perform server side encryption with Microsoft managed encryption scope
     with open("decryptedcontentfile.txt", "rb") as stream:
-        blob_client.upload_blob(stream, encryption_scope=SERVER_MANAGED_ENCRYPTION_SCOPE, blob_type=blobtype, overwrite=OVERWRITER)
+        blob_client.upload_blob(stream, cpk=CUSTOMER_PROVIDED_KEY, blob_type=blobtype, overwrite=OVERWRITER)
 
     print("\nBlob uploaded to Azure Storage Account.")
 

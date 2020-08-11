@@ -1,5 +1,5 @@
 from azure.storage.blob import BlobServiceClient
-from ClientSideLocalKeyToCustomerManagedKey.settings import *
+from ClientSideEncryptionToServerSideEncryptionMigrationSamples.ClientSideLocalKeyToCustomerManagedKey.settings import *
 
 
 def main():

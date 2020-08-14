@@ -1,5 +1,5 @@
 # README
-The purpose of this sample is to create a log of all new events that occur in a storage account with multidimensional filtering that runs on a timer using an Azure Function
+The purpose of this sample is to create a log of all new events that occur in a storage account with multidimensional filtering that runs on a timer using an Azure Function.
 
 ## Prerequisites
 [An Azure Subscription](https://azure.microsoft.com/en-us/free/)

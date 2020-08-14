@@ -39,10 +39,10 @@ def get_events(token_client, cf_client):
 
     # check if continuation token already exists
     blob_name = "cursorBlob"
-    blobClient = token_client.get_blob_client(blob_name)
+    blob_client = token_client.get_blob_client(blob_name)
     try:
-        blobClient.get_blob_properties
-        cursor = blobClient.download_blob().readall()
+        blob_client.get_blob_properties
+        cursor = blob_client.download_blob().readall()
 
         # initiate the changefeed with cursor
         change_feed = cf_client.list_changes(results_per_page=EVENTS_PER_PAGE_QUANTITY).by_page(continuation_token=eval(cursor))

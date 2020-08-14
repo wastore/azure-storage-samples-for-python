@@ -2,6 +2,7 @@ from azure.storage.blob import BlobServiceClient
 import random
 import time
 from .settings import *
+from azure.core.exceptions import ResourceExistsError
 
 # The purpose of this file is to randomly generate changefeed events, either BlobCreated or BlobDeleted
 # This file is not required to run the changefeedSample.py
@@ -16,7 +17,7 @@ def main():
 
     try:
         container_client = blob_service_client.create_container(container_name)
-    except:
+    except ResourceExistsError:
         container_client = blob_service_client.get_container_client(container_name)
 
 

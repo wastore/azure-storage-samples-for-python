@@ -13,11 +13,9 @@ The purpose of this sample is to create a log of all new events that occur in a 
 [Python 3.6 or above](https://www.python.org/downloads/)
 
 ## How to Use
-This sample includes an __init__.py file as the main program, a function.json to configure the timer trigger function, and a blobEventsSample.py file that represents a data creation sample by creating events to test the program on.
+This sample includes an changefeedSample.py file as the main program, a function.json to configure the timer trigger function, and a blobEventsSample.py file that represents a data creation sample by creating events to test the program on.
 
-To use the data creation sample, you must go into the code an add your personal connection string
-
-To use the function, you must go into the __init__ file and add your connection string as well as your container name, and which filters you wish to employ!
+Please add all required personal information to settings.py
 
 ## Building An Azure Function
 For help setting up an Azure Function follow these steps:

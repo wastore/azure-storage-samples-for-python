@@ -25,12 +25,12 @@ def main(mytimer: func.TimerRequest) -> None:
  
     # logging filtered event output
     if len(events) == 0:
-        logging.error("\nNo events matching filters on current page...")
+        logging.info("\nNo events matching filters on current page...")
     else:
-        logging.error("\nRecents event(s) matching filters on current page:")
+        logging.info("\nRecents event(s) matching filters on current page:")
         count = 1
         for e in events:
-            logging.error("%d: %s\n" % (count, e))
+            logging.info("%d: %s\n" % (count, e))
             count += 1
 
 
@@ -60,7 +60,7 @@ def get_events(token_client, cf_client):
 
     # check if new iteration reaches end of events
     if change_feed.continuation_token is None:
-        logging.error("\nNo new matching events... program will output last set of matching events until new events are added...")
+        logging.info("\nNo new matching events... program will output last set of matching events until new events are added...")
     # set continuation token as last event in the filtered event list
     else:
         cursor = change_feed.continuation_token

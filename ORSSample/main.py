@@ -11,7 +11,6 @@ blobs = BLOB_NAMES
 
 
 def main():
-
     source_blob_service_client = BlobServiceClient.from_connection_string(source_connect_str)
     source_blob_container_client = source_blob_service_client.get_container_client(source_container_name)
     source_blob_client = source_blob_service_client.get_blob_client(container=source_container_name, blob=blobs[0])
@@ -20,7 +19,6 @@ def main():
     upload_blobs(source_blob_service_client, source_container_name, blobs)
 
     print("Replicating...")
-    # check_completion(source_blob_client)
     track_progress(source_blob_service_client, source_container_name, blobs)
     print("Replication Complete")
 
@@ -39,14 +37,13 @@ def main():
 
     print("Archiving...")
     archive_blobs(source_blob_container_client, blobs)
-    # archive_batch(source_blob_container_client, blobs)
     print("Archived")
 
 
 # Upload multiple blobs
 def upload_blobs(source_blob_service_client, container_name, blobs):
-    for x in blobs:
-        source_blob_client = source_blob_service_client.get_blob_client(container=container_name, blob=x)
+    for blob_name in blobs:
+        source_blob_client = source_blob_service_client.get_blob_client(container=container_name, blob=blob_name)
         source_blob_client.upload_blob("Hello World!", overwrite=True)
 
 
@@ -58,16 +55,16 @@ def track_progress(source_blob_service_client, container_name, blobs):
     completed_events = []
 
     while completed < length:
-        for x in incomplete_events:
-            blob_client = source_blob_service_client.get_blob_client(container=container_name, blob=x)
+        for incomplete_event in incomplete_events:
+            blob_client = source_blob_service_client.get_blob_client(container=container_name, blob=incomplete_event)
             props = blob_client.get_blob_properties()
 
             for replication_policy in props.object_replication_source_properties:
                 for rule in replication_policy.rules:
                     if rule.status == "complete":
                         completed += 1
-                        completed_events.append(x)
-                        incomplete_events.remove(x)
+                        completed_events.append(incomplete_event)
+                        incomplete_events.remove(incomplete_event)
 
                         percent = completed/length
                         print("Replication is at " + str(percent*100) + "%.")
@@ -116,8 +113,8 @@ def print_contents(source_blob_client, dest_blob_client):
 
 # Archive blobs individually
 def archive_blobs(container_client, blobs):
-    for x in blobs:
-        blob_client = container_client.get_blob_client(x)
+    for blob_name in blobs:
+        blob_client = container_client.get_blob_client(blob_name)
         blob_client.set_standard_blob_tier("Archive")
 
 

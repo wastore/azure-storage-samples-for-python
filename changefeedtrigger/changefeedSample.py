@@ -41,7 +41,6 @@ def get_events(token_client, cf_client):
     blob_name = "cursorBlob"
     blob_client = token_client.get_blob_client(blob_name)
     try:
-        blob_client.get_blob_properties
         cursor = blob_client.download_blob().readall()
 
         # initiate the changefeed with cursor
@@ -73,8 +72,11 @@ def get_events(token_client, cf_client):
 def filter_events(events):
     # this method filters the changefeed events
 
-    # get multidimensionally filtered events
-    filtered_events = filter(lambda f: f["eventType"] == EVENT_FILTER and ("/" + CONTAINER_FILTER + "/") in f["subject"] and ("/" + BLOB_FILTER) in f["subject"], events)
+    # get multidimensionally filtered events-- filter blob and container name, and event type is optional
+    if EVENT_FILTER == "ALL":
+        filtered_events = filter(lambda f: ("/" + CONTAINER_FILTER + "/") in f["subject"] and ("/" + BLOB_FILTER) in f["subject"], events)
+    else:
+        filtered_events = filter(lambda f: f["eventType"] == EVENT_FILTER and ("/" + CONTAINER_FILTER + "/") in f["subject"] and ("/" + BLOB_FILTER) in f["subject"], events)
 
     # return filtered events
     return list(filtered_events)

@@ -123,5 +123,9 @@ def archive_batch(container_client, blobs):
     container_client.set_standard_blob_tier_blobs("Archive", *blobs)
 
 
+def delete_batch(container_client, blobs):
+    container_client.delete_blobs(*blobs)
+
+
 if __name__ == '__main__':
     main()

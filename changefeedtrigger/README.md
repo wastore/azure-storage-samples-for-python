@@ -13,7 +13,7 @@ The purpose of this sample is to create a log of all new events that occur in a 
 [Python 3.6 or above](https://www.python.org/downloads/)
 
 ## How to Use
-This sample includes an changefeedSample.py file as the main program, a function.json to configure the timer trigger function, and a blobEventsSample.py file that represents a data creation sample by creating events to test the program on.
+This sample includes an changefeed_sample.py file as the main program, a function.json to configure the timer trigger function, and a blob_events_sample.py file that represents a data creation sample by creating events to test the program on.
 
 Please add all required personal information to settings.py
 
@@ -53,4 +53,4 @@ If more help is needed reference this documentation, but note that it references
 https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function
 
 ## Viewing logs from Azure Function
-To view logs from the deployed changefeedSample program, follow [these instructions.](https://docs.microsoft.com/en-us/azure/azure-functions/functions-monitoring?tabs=cmd)
+To view logs from the deployed changefeed_sample program, follow [these instructions.](https://docs.microsoft.com/en-us/azure/azure-functions/functions-monitoring?tabs=cmd)

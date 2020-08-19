@@ -5,7 +5,7 @@ from .settings import *
 from azure.core.exceptions import ResourceExistsError
 
 # The purpose of this file is to randomly generate changefeed events, either BlobCreated or BlobDeleted
-# This file is not required to run the changefeedSample.py
+# This file is not required to run the changefeed_sample.py
 
 
 def main():

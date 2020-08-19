@@ -1,4 +1,4 @@
-from .changefeedSample import main
+from .changefeed_sample import main
 
 
 __all__ = [

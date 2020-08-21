@@ -18,7 +18,7 @@ def main():
     dest_blob_service_client = BlobServiceClient.from_connection_string(dest_connect_str)
 
     print("Uploading source blobs...")
-    upload_blobs(source_blob_service_client, source_container_name, blob_name, 1000)
+    upload_blobs(source_blob_service_client, source_container_name, blob_name, 5)
 
     print("Replicating...")
     track_progress(source_blob_service_client, source_container_name, blobs)
@@ -65,7 +65,7 @@ def track_progress(source_blob_service_client, container_name, blobs):
                             break
 
                     if rule.status == "failed":
-                        print("failed")
+                        print("Replication failed")
                         break
 
 
@@ -109,21 +109,10 @@ def update_blob(source_blob_service_client, dest_blob_service_client, blob_name)
 # Compares the contents of a replicated blob
 def print_contents(source_blob_client, dest_blob_client):
     print("Source Blob Contents:")
-    download_source = open("download_source.txt", "wb")
-    download_source.write(source_blob_client.download_blob().readall())
-    download_source = open("download_source.txt", "r")
-    print(download_source.read())
-    download_source.close()
+    print(source_blob_client.download_blob().readall())
 
     print("Destination Blob Contents:")
-    download_dest = open("download_dest.txt", "wb")
-    download_dest.write(dest_blob_client.download_blob().readall())
-    download_dest = open("download_dest.txt", "r")
-    print(download_dest.read())
-    download_dest.close()
-
-    os.remove("download_source.txt")
-    os.remove("download_dest.txt")
+    print(dest_blob_client.download_blob().readall())
 
 
 # Archive blobs individually

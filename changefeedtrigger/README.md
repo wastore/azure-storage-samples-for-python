@@ -6,6 +6,8 @@ The purpose of this sample is to create a log of all new events that occur in a 
 
 [An Azure Storage Account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal)
 
+[Changefeed Enabled on Storage Account](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-change-feed?tabs=azure-portal#enable-and-disable-the-change-feed)
+
 [A Timer Trigger Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-scheduled-function#:~:text=Create%20a%20timer%20triggered%20function%201%20Expand%20your,by%20viewing%20trace%20information%20written%20to%20the%20logs.)
 
 [Visual Studio Code](https://visualstudio.microsoft.com/downloads/)

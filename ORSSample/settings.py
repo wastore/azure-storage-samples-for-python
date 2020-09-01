@@ -1,0 +1,9 @@
+# Enter values for the following variables
+
+SOURCE_CONNECTION_STRING = ""
+DESTINATION_CONNECTION_STRING = ""
+
+SOURCE_CONTAINER_NAME = ""
+DESTINATION_CONTAINER_NAME = ""
+
+BLOB_NAME = "exampleBlob"

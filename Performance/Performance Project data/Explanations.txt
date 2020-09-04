@@ -1,0 +1,16 @@
+Single var files are ordered by sheets. Each sheet contains a different parameter that varies by row. Different file sizes are used and vary by column
+
+Combined var files are tested with only one file. For files 3 and 4, this file is 8 mb, while for the rest this file is 128 mb. The rows vary by concurrency,
+the columns by max block size, and the sheets vary by min threshold.
+
+Files 1 and 2 test concurrencies of range(1,30,5), files sizes 128, 256, and 384 mb, and max block and min thresh of 
+[1*1024*1024, 16*1024*1024, 32*1024*1024, 48*1024*1024, 56*1024*1024]
+
+Files 3 and 4 test concurrencies of range(1,30,5), files sizes 8, 16, 32, 64, and 128 mb, and max block and min thresh of 
+[1*1024*1024, 16*1024*1024, 32*1024*1024, 48*1024*1024, 56*1024*1024]
+
+Files 5 test concurrencies of range(30,60,5), files sizes 128, 256, and 384 mb, and max block and min thresh of 
+[64*1024*1024, 72*1024*1024, 80*1024*1024, 88*1024*1024, 96*1024*1024]
+
+File 6 test concurrencies [1, 2, 3, 4, 5, 10, 15, 20], file sizes 128, 256, and 384 mb, and max block and min 
+thresh of [1*1024*1024, 16*1024*1024, 32*1024*1024, 48*1024*1024, 56*1024*1024]

@@ -1,16 +1,13 @@
-from azure.storage.blob import CustomerProvidedEncryptionKey
+
 from azure.keyvault.keys.crypto import KeyWrapAlgorithm
+from azure.storage.blob import CustomerProvidedEncryptionKey
 
-# the below values are fake and need to be replaced
-
-# items to access keyvault
+# Items to access keyvault
 KEYVAULT_URL = ""
-CLIENT_ID = ""
-CLIENT_SECRET = ""
-TENANT_ID = ""
 
-# items to access storage account
+# Items to access storage account
 CONNECTION_STRING = ""
+# Only needed to create an encryption scope
 SUBSCRIPTION_ID = ""
 RESOURCE_GROUP = ""
 STORAGE_ACCOUNT = ""
@@ -19,16 +16,16 @@ STORAGE_ACCOUNT = ""
 CUSTOMER_PROVIDED_KEY = CustomerProvidedEncryptionKey(key_value="",
                                                       key_hash="")
 
-# keyvault key used for encryption
+# Keyvault key used for encryption
 # CLIENT_SIDE_KEYNAME should used when wrapping key with RSA keywrap algorithm, otherwise use KEYVAULT_SECRET
 CLIENT_SIDE_KEYNAME = ""
 KEYVAULT_SECRET = ""
-CLIENT_SIDE_KEY_WRAP_ALGORITHM = KeyWrapAlgorithm.aes_256  # .rsa_oaep, .rsa_oaep_256, .rsa1_5, .aes_256
+KEY_WRAP_ALGORITHM = KeyWrapAlgorithm.aes_256  #.rsa_oaep, .rsa_oaep_256, .rsa1_5, .aes_256
 
 CONTAINER_NAME = "client-side-keyvault-key-to-customer-provided-key"
-BLOB_NAME = "blobExample.txt"
-MIGRATED_BLOB_NAME = "cpk-" + BLOB_NAME
 
-# if user wants to overwrite blob with the same name as migrated_blob_name in the migration.py, as well as the blob_name
-# uploaded in the sampleDataCreator.py, change value of overwriter to True
-OVERWRITER = False
+# Whether to overwrite the existing blobs in the contianer when uploading decrypting blobs.
+# If False, new blobs will be created with the given NEW_BLOB_SUFFIX.
+OVERWRITE_EXISTING = False
+# New blobs will have the name <existing-name> + NEW_BLOB_SUFFIX
+NEW_BLOB_SUFFIX = '-mmk'

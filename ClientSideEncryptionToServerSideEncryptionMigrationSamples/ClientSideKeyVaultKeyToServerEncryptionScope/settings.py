@@ -20,6 +20,7 @@ CREATE_ENCRYPTION_SCOPE = False
 # If this is empty, a Microsoft Managed Encryption Scope will be created instead.
 ENCRYPTION_SCOPE_KEY_KEYVAULT_URI = ""
 
+# Keyvault key used for encryption
 # CLIENT_SIDE_KEYNAME should used when wrapping key with RSA keywrap algorithm, otherwise use KEYVAULT_SECRET
 CLIENT_SIDE_KEYNAME = ""
 KEYVAULT_SECRET = ""

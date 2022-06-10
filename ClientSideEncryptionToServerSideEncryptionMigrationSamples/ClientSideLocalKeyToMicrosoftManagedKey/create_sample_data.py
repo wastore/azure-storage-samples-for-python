@@ -6,13 +6,13 @@ def main():
     # Access a container using connection string
     blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
 
-    # Create container by name
+    # Create container if it doesn't exist
     try:
         blob_service_client.create_container(CONTAINER_NAME)
     except:
         pass
 
-    # Upload 5 blobs with random content into the container
+    # Upload 5 blobs into the container
     for i in range(5):
         blob_name = f'sample-blob-{i}'
         blob_content = b'This is sample content to be encrypted.'

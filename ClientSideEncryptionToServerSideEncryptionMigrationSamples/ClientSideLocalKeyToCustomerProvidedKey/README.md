@@ -1,24 +1,20 @@
 # Local Key Client Side Encryption Migration to Customer Provided Key Server Side Encryption
 
-This program functions as a migration of data in Azure Storage from client side encryption with a local key to server side encryption using a Customer Provided Key.
+This script functions as a sample of how to migrate data that was uploaded using client-side encryption with a local key to use server-side encryption with a Customer-Provided Key. The sample includes a script to generate sample data, `create_sample_data.py`, as well as a script that will migrate all data within a given container, `miration.py`.
 
 ## Getting Started
 ### Prerequisites
-Requires installation of [Python](https://www.python.org/downloads/) and [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest). Requires an [Azure subscription](https://azure.microsoft.com/en-us/free/) and an [Azure storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal).
+Requires installation of [Python 3](https://www.python.org/downloads/) and [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) (if you wish to programaticaly generate an encryption scope). Requires an [Azure subscription](https://azure.microsoft.com/en-us/free/) and an [Azure storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal).
 
-## How to Use
-###Setting Up the Program
-#### exampleDataCreator.py
-In the exampleDataCreator folder, please navigate to exampleDataCreator.py for a program example of what setup you should have completed before running the main program, migration.py. In this program, that means having performed client side encryption with a local key and having had uploaded it to Azure Storage as a blob.
+This sample requires the following packages to be installed:
+azure-storage-blob
 
-It is not required to run this file in order to run migration.py
-####settings.py
-In the setup folder, please read through and update the settings.py file with the required information before running the main program, migration.py. All of the information in the settings.py file is required, or else the program will not function.
-####migration.py
-As this program is a migration from local client side encryption, for the program to run you must replace decryption() with your personal decryption method, so that the program can undo your encryption. This specific program is using Cryptography.Fernet to perform decryption.
-####client side encryption key
-If you plan to run the main program with your encrypted content, please add the file containing your encryption key to the setup folder
+## Setup
+#### Settings
+The migration script and the sample data script require various settings about your Storage Account, Key Vault, etc. Please fill in the required values in `settings.py`. Also included in the settings file is a sample `KeyWrapper` which must be replaced with your key wrapping class. This is used to perform decryption of your encrypted blobs and to generate sample data.
 
-###Running the Main Program
-####migration.py
-After following the above steps under _Setting Up The Program_, all that is required to perform the migration is to run the file migration.py. This program will decrypt the local key client side encryption and re-upload the blob to Azure Storage with Customer Provided Key Server Side Encryption.
+### Creating sample data
+The migration script expects some data to be set up ahead of time. Please see `create_sample_data.py` to see an example or to create sample data for testing. It is not required to run this file in order to run `migration.py`.
+
+## Migration Script
+Once setup is complete, the migration script, `migration.py` can be run to migrate all data within the provided container. The container name is provided in `settings.py`. Depending on the size fo the cotnainer, this could take some time.

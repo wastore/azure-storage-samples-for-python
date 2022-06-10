@@ -14,11 +14,12 @@ CREATE_ENCRYPTION_SCOPE = False
 # If this is empty, a Microsoft Managed Encryption Scope will be created instead.
 ENCRYPTION_SCOPE_KEY_KEYVAULT_URI = ""
 
+# Replace these with your local key id, key value and algorithm
 LOCAL_KEY_NAME = "local-test-key"
 LOCAL_KEY_VALUE = "6wcF1o5QEzJJKIrH8QpR7mGjSqTP3d28ScSxV0hJ67Q="
 KEY_WRAP_ALGORITHM = "example-algorithm"
 
-CONTAINER_NAME = "client-side-local-key-to-microsoft-managed-key"
+CONTAINER_NAME = "client-side-local-key-to-encryption-scope"
 
 # Whether to overwrite the existing blobs in the contianer when uploading decrypting blobs.
 # If False, new blobs will be created with the given NEW_BLOB_SUFFIX.
@@ -27,10 +28,8 @@ OVERWRITE_EXISTING = False
 NEW_BLOB_SUFFIX = '-mmk'
 
 
-# replace with your keywrapper
+# Replace with your keywrapper
 class KeyWrapper:
-    # key wrap algorithm for kek
-
     def __init__(self, kid, kek):
         self.algorithm = KEY_WRAP_ALGORITHM
         self.kid = kid

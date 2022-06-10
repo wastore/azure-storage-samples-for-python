@@ -9,6 +9,10 @@ STORAGE_ACCOUNT = ""
 # to True to have the script create a new encryption scope
 ENCRYPTION_SCOPE_NAME = "testencryptionscope"
 CREATE_ENCRYPTION_SCOPE = False
+# If CREATE_ENCRYPTION_SCOPE is True, specify this to create a Customer Managed Encryption
+# Scope pointing to your KeyVault. Use the full KeyVault Key Identifier URL
+# If this is empty, a Microsoft Managed Encryption Scope will be created instead.
+ENCRYPTION_SCOPE_KEY_KEYVAULT_URI = "https://jalauzon-kv.vault.azure.net/keys/test-encryption-scope-key/e2b3c867d13242ebb48ecd6f8bb51d46"
 
 LOCAL_KEY_NAME = "local-test-key"
 LOCAL_KEY_VALUE = "6wcF1o5QEzJJKIrH8QpR7mGjSqTP3d28ScSxV0hJ67Q="
@@ -18,7 +22,7 @@ CONTAINER_NAME = "client-side-local-key-to-microsoft-managed-key"
 
 # Whether to overwrite the existing blobs in the contianer when uploading decrypting blobs.
 # If False, new blobs will be created with the given NEW_BLOB_SUFFIX.
-OVERWRITE_EXISTING = True
+OVERWRITE_EXISTING = False
 # New blobs will have the name <existing-name> + NEW_BLOB_SUFFIX
 NEW_BLOB_SUFFIX = '-mmk'
 

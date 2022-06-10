@@ -1,6 +1,6 @@
-# Local Key Client Side Encryption Migration to Microsoft Managed Server Server Side Encryption
+# Local Key Client Side Encryption Migration to Encryption Scope Server Side Encryption
 
-This script functions as a sample of how to migrate data that was uploaded using client-side encryption with a local key to use server-side encryption with a Microsoft-managed key stored in an encryption scope. The sample includes a script to generate sample data, `create_sample_data.py`, as well as a script that will migrate all data within a given container, `miration.py`.
+This script functions as a sample of how to migrate data that was uploaded using client-side encryption with a local key to use server-side encryption with an encryption scope with either a Microsoft managed key or a Customer Managed key. The sample includes a script to generate sample data, `create_sample_data.py`, as well as a script that will migrate all data within a given container, `miration.py`.
 
 ## Getting Started
 ### Prerequisites

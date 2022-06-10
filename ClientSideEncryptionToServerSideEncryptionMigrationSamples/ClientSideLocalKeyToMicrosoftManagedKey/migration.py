@@ -1,59 +1,94 @@
+
 import os
-from azure.storage.blob import BlobServiceClient
-from ClientSideEncryptionToServerSideEncryptionMigrationSamples.ClientSideLocalKeyToMicrosoftManagedKey.settings import *
+from json import loads
+
+from azure.storage.blob import BlobProperties, BlobServiceClient, BlobType
+from settings import *
 
 
 def main():
-    # use connection string to access client account
-    bs_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
-    # access your container-- this container must already exist to run this program
-    bs_client.get_container_client(CONTAINER_NAME)
+    # Use connection string to access client account
+    blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
+    # Ensure the container exists
+    container_client = blob_service_client.get_container_client(CONTAINER_NAME)
+    if not container_client.exists():
+        raise ValueError("The specified container does not exist.")
 
-    # create encryption scope
+    # Create encryption scope if needed
     if CREATE_ENCRYPTION_SCOPE:
         create_encryption_scope()
 
-    # call to run methods
-    download_blob(BLOB_NAME, bs_client, CONTAINER_NAME)
-    upload_blob(BLOB_NAME, bs_client, CONTAINER_NAME)
+    # Loop through all blobs in the container
+    for blob in container_client.list_blobs(include=['metadata']):
+        # Determine if the blob is encrypted using client-side encryption V1
+        if is_client_side_encrypted_v1(blob):
+            # Download and decrypt blob to file
+            download_blob(blob_service_client, CONTAINER_NAME, blob.name)
+            # Upload server-side encrypted blob
+            upload_blob(blob_service_client, CONTAINER_NAME, blob.name, blob.blob_type)
 
 
-def create_encryption_scope():
+def create_encryption_scope() -> None:
     print("\nCreating Microsoft Managed Key Encryption Scope...\n")
     os.system(
-        'cmd /c "az storage account encryption-scope create --account-name ' + STORAGE_ACCOUNT + ' --name ' + SERVER_MANAGED_ENCRYPTION_SCOPE + ' --key-source Microsoft.Storage --resource-group ' + RESOURCE_GROUP + ' --subscription ' + SUBSCRIPTION_ID + '"')
+        'cmd /c "az storage account encryption-scope create --account-name ' + STORAGE_ACCOUNT + ' --name ' + ENCRYPTION_SCOPE_NAME + ' --key-source Microsoft.Storage --resource-group ' + RESOURCE_GROUP + ' --subscription ' + SUBSCRIPTION_ID + '"')
 
 
-def download_blob(filename, blob_service_client, cont_name):
-    # download encrypted blob from azure storage
-    kek = KeyWrapper(LOCAL_KEY_VALUE)
-    # access specific container and blob with blob client
-    blob_client = blob_service_client.get_blob_client(container=cont_name, blob=filename)
+def is_client_side_encrypted_v1(blob: BlobProperties) -> bool:
+    metadata = blob.metadata
+    # Check for presence of encryption metadata
+    if metadata and 'encryptiondata' in metadata:
+        try:
+            # Parse the encryption data to find version
+            encryption_data = loads(metadata['encryptiondata'])
+            if encryption_data['EncryptionAgent']['Protocol'] == '1.0':
+                return True
+
+        except (ValueError, KeyError):
+            return False
+
+    return False
+
+
+def download_blob(
+        blob_service_client: BlobServiceClient, 
+        container_name: str,
+        blob_name: str) -> None:
+    # Download encrypted blob from azure storage
+    kek = KeyWrapper(LOCAL_KEY_NAME, LOCAL_KEY_VALUE)
+    # Access specific container and blob with blob client
+    blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name)
     blob_client.key_encryption_key = kek
-    print("\nReading blob from Azure Storage...")
-    # write encrypted contents of blob to a file
-    with open("decryptedcontentfile.txt", "wb+") as stream:
+
+    print(f"\nReading blob {blob_name} from Azure Storage...")
+    # Write encrypted contents of blob to a file
+    with open("decryptedcontentfile.txt", "wb") as stream:
         blob_client.download_blob().readinto(stream)
 
 
-def upload_blob(filename, blob_service_client, cont_name):
-    # upload decrypted blob back to azure storage and perform server side encryption
+def upload_blob(
+        blob_service_client: BlobServiceClient,
+        container_name: str,
+        blob_name: str,
+        blob_type: BlobType) -> None:
+    # Upload and use server side encryption with Microsoft managed key through encryption scope
+    print("Performing server-side encryption with Microsoft Managed Key Encryption Scope...")
 
-    # determine the blob type for upload
-    blob_client = blob_service_client.get_blob_client(container=cont_name, blob=filename)
-    properties = blob_client.get_blob_properties()
-    blobtype = properties.blob_type
+    # Determine blob name based on settings
+    if not OVERWRITE_EXISTING:
+        blob_name = blob_name + NEW_BLOB_SUFFIX
 
-    # upload and use server side encryption with Microsoft managed key through encryption scope
-    print("\nPerforming server side encryption with Microsoft Managed Key Encryption Scope...")
-    # access specific container and blob
-    blob_client = blob_service_client.get_blob_client(container=cont_name, blob=MIGRATED_BLOB_NAME)
-    # upload and perform server side encryption with Microsoft managed encryption scope
+    blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name)
     with open("decryptedcontentfile.txt", "rb") as stream:
-        blob_client.upload_blob(stream, encryption_scope=SERVER_MANAGED_ENCRYPTION_SCOPE, blob_type=blobtype, overwrite=OVERWRITER)
+        blob_client.upload_blob(
+            stream,
+            encryption_scope=ENCRYPTION_SCOPE_NAME,
+            blob_type=blob_type,
+            overwrite=OVERWRITE_EXISTING)
 
-    print("\nBlob uploaded to Azure Storage Account.")
+    print(f"Blob {blob_name} uploaded to Azure Storage Account.")
 
+    # Clean up temporary file
     os.remove("decryptedcontentfile.txt")
 
 

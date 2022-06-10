@@ -1,44 +1,36 @@
-# items to access keyvault
-KEYVAULT_URL = ""
-CLIENT_ID = ""
-CLIENT_SECRET = ""
-TENANT_ID = ""
-
-# items to access storage account
+# Items to access storage account
 CONNECTION_STRING = ""
+# Only needed to create an encryption scope
 SUBSCRIPTION_ID = ""
 RESOURCE_GROUP = ""
 STORAGE_ACCOUNT = ""
 
-# if you want program to create encryption scope, change to True. if not, it will access a preexisting
-# encryption scope with the name CUSTOMER_MANAGED_ENCRYPTION_SCOPE
+# Provide the name to a pre-existing encryption scope or set CREATE_ENCRYPTION_SCOPE
+# to True to have the script create a new encryption scope
+ENCRYPTION_SCOPE_NAME = "testencryptionscope"
 CREATE_ENCRYPTION_SCOPE = False
-# replace with name for microsoft managed encryption scope
-# this will be made automatically in the main program, so just insert what you want the name to be
-SERVER_MANAGED_ENCRYPTION_SCOPE = "test-server-scope"
 
+LOCAL_KEY_NAME = "local-test-key"
 LOCAL_KEY_VALUE = "6wcF1o5QEzJJKIrH8QpR7mGjSqTP3d28ScSxV0hJ67Q="
 KEY_WRAP_ALGORITHM = "example-algorithm"
 
 CONTAINER_NAME = "client-side-local-key-to-microsoft-managed-key"
-BLOB_NAME = "blobExample.txt"
-LOCAL_KEY_NAME = "local-test-key"
-# here put what you want the encrypted blob to be named
-MIGRATED_BLOB_NAME = "mmk-" + BLOB_NAME
 
-# if user wants to overwrite blob with the same name as migrated_blob_name in the migration.py, as well as the blob_name
-# uploaded in the sampleDataCreator.py, change value of overwriter to True
-OVERWRITER = False
+# Whether to overwrite the existing blobs in the contianer when uploading decrypting blobs.
+# If False, new blobs will be created with the given NEW_BLOB_SUFFIX.
+OVERWRITE_EXISTING = True
+# New blobs will have the name <existing-name> + NEW_BLOB_SUFFIX
+NEW_BLOB_SUFFIX = '-mmk'
 
 
 # replace with your keywrapper
 class KeyWrapper:
     # key wrap algorithm for kek
 
-    def __init__(self, kek):
+    def __init__(self, kid, kek):
         self.algorithm = KEY_WRAP_ALGORITHM
+        self.kid = kid
         self.kek = kek
-        self.kid = kek
 
     def wrap_key(self, key):
         if self.algorithm == "example-algorithm":

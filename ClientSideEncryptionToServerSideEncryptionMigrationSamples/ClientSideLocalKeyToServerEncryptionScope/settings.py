@@ -12,7 +12,7 @@ CREATE_ENCRYPTION_SCOPE = False
 # If CREATE_ENCRYPTION_SCOPE is True, specify this to create a Customer Managed Encryption
 # Scope pointing to your KeyVault. Use the full KeyVault Key Identifier URL
 # If this is empty, a Microsoft Managed Encryption Scope will be created instead.
-ENCRYPTION_SCOPE_KEY_KEYVAULT_URI = "https://jalauzon-kv.vault.azure.net/keys/test-encryption-scope-key/e2b3c867d13242ebb48ecd6f8bb51d46"
+ENCRYPTION_SCOPE_KEY_KEYVAULT_URI = ""
 
 LOCAL_KEY_NAME = "local-test-key"
 LOCAL_KEY_VALUE = "6wcF1o5QEzJJKIrH8QpR7mGjSqTP3d28ScSxV0hJ67Q="

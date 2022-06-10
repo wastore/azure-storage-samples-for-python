@@ -15,6 +15,10 @@ STORAGE_ACCOUNT = ""
 # to True to have the script create a new encryption scope
 ENCRYPTION_SCOPE_NAME = "testencryptionscope"
 CREATE_ENCRYPTION_SCOPE = False
+# If CREATE_ENCRYPTION_SCOPE is True, specify this to create a Customer Managed Encryption
+# Scope pointing to your KeyVault. Use the full KeyVault Key Identifier URL
+# If this is empty, a Microsoft Managed Encryption Scope will be created instead.
+ENCRYPTION_SCOPE_KEY_KEYVAULT_URI = ""
 
 # CLIENT_SIDE_KEYNAME should used when wrapping key with RSA keywrap algorithm, otherwise use KEYVAULT_SECRET
 CLIENT_SIDE_KEYNAME = ""

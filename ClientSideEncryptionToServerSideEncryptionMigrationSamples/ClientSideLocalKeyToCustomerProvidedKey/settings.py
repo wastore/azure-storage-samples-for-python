@@ -20,7 +20,7 @@ CONTAINER_NAME = "client-side-local-key-to-customer-provided-key"
 
 # Whether to overwrite the existing blobs in the contianer when uploading decrypting blobs.
 # If False, new blobs will be created with the given NEW_BLOB_SUFFIX.
-OVERWRITE_EXISTING = True
+OVERWRITE_EXISTING = False
 # New blobs will have the name <existing-name> + NEW_BLOB_SUFFIX
 NEW_BLOB_SUFFIX = '-mmk'
 

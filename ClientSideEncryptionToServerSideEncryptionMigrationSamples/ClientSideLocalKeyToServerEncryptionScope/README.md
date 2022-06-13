@@ -17,4 +17,4 @@ The migration script and the sample data script require various settings about y
 The migration script expects some data to be set up ahead of time. Please see `create_sample_data.py` to see an example or to create sample data for testing. It is not required to run this file in order to run `migration.py`.
 
 ## Migration Script
-Once setup is complete, the migration script, `migration.py` can be run to migrate all data within the provided container. The container name is provided in `settings.py`. Depending on the size fo the cotnainer, this could take some time.
+Once setup is complete, the migration script, `migration.py` can be run to migrate all data within the provided container. The container name is provided in `settings.py`. Depending on the size of the cotnainer, this could take some time.

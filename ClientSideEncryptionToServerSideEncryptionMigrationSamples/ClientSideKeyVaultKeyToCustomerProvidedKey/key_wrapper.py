@@ -3,8 +3,6 @@ from azure.keyvault.keys.crypto import CryptographyClient
 from settings import *
 
 class KeyWrapper:
-    # key wrap algorithm for kek
-
     def __init__(self, kek, credential):
         self.algorithm = KEY_WRAP_ALGORITHM
         self.kek = kek

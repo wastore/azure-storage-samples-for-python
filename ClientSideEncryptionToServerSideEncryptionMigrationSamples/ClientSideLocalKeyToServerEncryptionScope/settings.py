@@ -21,7 +21,7 @@ KEY_WRAP_ALGORITHM = "example-algorithm"
 
 CONTAINER_NAME = "client-side-local-key-to-encryption-scope"
 
-# Whether to overwrite the existing blobs in the contianer when uploading decrypting blobs.
+# Whether to overwrite the existing blobs in the container when uploading decrypted blobs.
 # If False, new blobs will be created with the given NEW_BLOB_SUFFIX.
 OVERWRITE_EXISTING = False
 # New blobs will have the name <existing-name> + NEW_BLOB_SUFFIX

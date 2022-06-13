@@ -29,13 +29,13 @@ def main():
 
 
 def create_encryption_scope() -> None:
-    # If a KeyVault URI was specified, create a Custoemr Managed Encryption Scope 
+    # If a KeyVault URI was specified, create a Customer managed Encryption Scope 
     if ENCRYPTION_SCOPE_KEY_KEYVAULT_URI:
         print("\nCreating Customer Managed Key Encryption Scope...\n")
         os.system(
             'cmd /c "az storage account encryption-scope create --account-name ' + STORAGE_ACCOUNT + ' --name ' + ENCRYPTION_SCOPE_NAME + ' --key-source Microsoft.KeyVault --resource-group ' + RESOURCE_GROUP + ' --subscription ' + SUBSCRIPTION_ID + ' --key-uri ' + k_uri + '"')
 
-    # Else create a Microsoft Managed Encryption Scope
+    # Else create a Microsoft managed Encryption Scope
     else:
         print("\nCreating Microsoft Managed Key Encryption Scope...\n")
         os.system(

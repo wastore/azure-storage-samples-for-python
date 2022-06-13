@@ -28,4 +28,4 @@ All samples requires the following:
 
 Some sample may have additional requirements. See individual `README` for details.
 
-Each sample contains a `settings.py` file that contains settings that must be specified in order to run the sample. These include settings about you Storage Accoutn KeyVault (if applicable), client-side encryption details, server-side encryption details, and some additional settings. These settings files must be populated before attempting to generate date or run the migration script.
+Each sample contains a `settings.py` file that contains settings that must be specified in order to run the sample. These include settings about your Storage Account, KeyVault (if applicable), client-side encryption details, server-side encryption details, and some additional settings. These settings files must be populated before attempting to generate date or run the migration script.

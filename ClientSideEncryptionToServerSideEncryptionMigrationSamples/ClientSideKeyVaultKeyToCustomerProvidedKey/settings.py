@@ -24,7 +24,7 @@ KEY_WRAP_ALGORITHM = KeyWrapAlgorithm.aes_256  #.rsa_oaep, .rsa_oaep_256, .rsa1_
 
 CONTAINER_NAME = "client-side-keyvault-key-to-customer-provided-key"
 
-# Whether to overwrite the existing blobs in the contianer when uploading decrypting blobs.
+# Whether to overwrite the existing blobs in the container when uploading decrypted blobs.
 # If False, new blobs will be created with the given NEW_BLOB_SUFFIX.
 OVERWRITE_EXISTING = False
 # New blobs will have the name <existing-name> + NEW_BLOB_SUFFIX

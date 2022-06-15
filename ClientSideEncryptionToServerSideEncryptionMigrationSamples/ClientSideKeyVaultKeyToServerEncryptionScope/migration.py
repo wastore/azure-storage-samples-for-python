@@ -108,8 +108,8 @@ def upload_blob(
         container_name: str,
         blob_name: str,
         blob_type: BlobType) -> None:
-    # Upload and use server side encryption with Microsoft managed key through encryption scope
-    print("Performing server-side encryption with Microsoft Managed Key Encryption Scope...")
+
+    print("Performing server-side encryption with an Encryption Scope...")
 
     # Determine blob name based on settings
     if not OVERWRITE_EXISTING:

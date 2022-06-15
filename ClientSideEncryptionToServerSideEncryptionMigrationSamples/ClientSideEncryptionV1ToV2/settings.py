@@ -1,28 +1,18 @@
-from azure.storage.blob import CustomerProvidedEncryptionKey
-
 # Items to access storage account
 CONNECTION_STRING = ""
-# Only needed to create an encryption scope
-SUBSCRIPTION_ID = ""
-RESOURCE_GROUP = ""
-STORAGE_ACCOUNT = ""
-
-# Customer provided key for server side encryption
-CUSTOMER_PROVIDED_KEY = CustomerProvidedEncryptionKey(key_value="",
-                                                      key_hash="")
 
 # Replace these with your local key id, key value and algorithm
 LOCAL_KEY_NAME = "local-test-key"
 LOCAL_KEY_VALUE = "6wcF1o5QEzJJKIrH8QpR7mGjSqTP3d28ScSxV0hJ67Q="
 KEY_WRAP_ALGORITHM = "example-algorithm"
 
-CONTAINER_NAME = "client-side-local-key-to-customer-provided-key"
+CONTAINER_NAME = "client-side-encryption-v1-to-v2"
 
 # Whether to overwrite the existing blobs in the container when uploading decrypted blobs.
 # If False, new blobs will be created with the given NEW_BLOB_SUFFIX.
 OVERWRITE_EXISTING = False
 # New blobs will have the name <existing-name> + NEW_BLOB_SUFFIX
-NEW_BLOB_SUFFIX = '-cpk'
+NEW_BLOB_SUFFIX = '-v2'
 
 
 # Replace with your keywrapper

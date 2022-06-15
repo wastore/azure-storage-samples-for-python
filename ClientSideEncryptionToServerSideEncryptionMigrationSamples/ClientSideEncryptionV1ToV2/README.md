@@ -1,10 +1,12 @@
-# Local Key Client Side Encryption Migration to Encryption Scope Server Side Encryption
+# Client Side Encryption Migration from V1 to V2
 
-This script functions as a sample of migrating data that was previously uploaded using client-side encryption with a local key to now use server-side encryption with an encryption scope using either a Microsoft managed key or a Customer managed key. The sample includes a script to generate sample data, `create_sample_data.py`, as well as a script that will migrate all data within a given container, `migration.py`.
+This script functions as a sample of migrating data that was previously uploaded using client-side encryption V1 to now user client-side encryption V1. The sample includes a script to generate sample data, `create_sample_data.py`, as well as a script that will migrate all data within a given container, `migration.py`. This sample utilizes a local key for client-side encryption but can easily be modified to work with KeyVault.
+
+**_NOTE_:** It is recommended for most users that you use server-side encryption rather than client-side encryption. Please see the other samples in this project for examples of how to migrate to server-side encryption instead.
 
 ## Getting Started
 ### Prerequisites
-Requires installation of [Python 3](https://www.python.org/downloads/) and [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) (if you wish to programmatically generate an encryption scope). Requires an [Azure subscription](https://azure.microsoft.com/en-us/free/) and an [Azure storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal).
+Requires installation of [Python 3](https://www.python.org/downloads/). Requires an [Azure subscription](https://azure.microsoft.com/en-us/free/) and an [Azure storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal).
 
 This sample requires the following packages to be installed:
 azure-storage-blob

@@ -28,4 +28,4 @@ CONTAINER_NAME = "client-side-keyvault-key-to-customer-provided-key"
 # If False, new blobs will be created with the given NEW_BLOB_SUFFIX.
 OVERWRITE_EXISTING = False
 # New blobs will have the name <existing-name> + NEW_BLOB_SUFFIX
-NEW_BLOB_SUFFIX = '-mmk'
+NEW_BLOB_SUFFIX = '-cpk'

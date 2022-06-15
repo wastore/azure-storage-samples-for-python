@@ -10,6 +10,7 @@ Currently there are four samples present, each with their own directory:
 - **ClientSideKeyVaultKeyToServerEncryptionScope** - Migrate from client-side encryption V1 using a KeyVault to server-side encryption with an Encryption Scope. The Encryption scope can be using a Microsoft managed key or a Customer managed key from KeyVault.
 - **ClientSideLocalKeyToCustomerProvidedKey** - Migrate from client-side encryption V1 using a local key to server-side encryption with a Customer-Provided Key.
 - **ClientSideLocalKeyToServerEncryptionScope** - Migrate from client-side encryption V1 using a local key to server-side encryption with an Encryption Scope. The Encryption scope can be using a Microsoft managed key or a Customer managed key from KeyVault.
+- **ClientSideEncryptionV1ToV2** - Migrate from client-side encryption V1 to client-side encryption V2.
 
 ## General Info
 These samples begin with an optional data creation process to create an example container and populdate it with blobs encrypted with client-side encryption V1. The samples then migrate all blobs within the container to a specific type of server-side encryption and uploads the server-side encrypted blob in the same container (either alongside or overwritting the existing blobs). The sample data does not need to be used and the migration script can be used to migrate an existing cotnainer.

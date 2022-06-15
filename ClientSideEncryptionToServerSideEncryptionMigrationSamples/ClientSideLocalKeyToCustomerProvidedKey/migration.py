@@ -50,7 +50,7 @@ def download_blob(
     blob_client.key_encryption_key = kek
 
     print(f"\nReading blob {blob_name} from Azure Storage...")
-    # Write encrypted contents of blob to a file
+    # Write decrypted contents of blob to a file
     with open("decryptedcontentfile.txt", "wb") as stream:
         blob_client.download_blob().readinto(stream)
 
@@ -60,8 +60,8 @@ def upload_blob(
         container_name: str,
         blob_name: str,
         blob_type: BlobType) -> None:
-    # Upload and use server side encryption with Microsoft managed key through encryption scope
-    print("Performing server-side encryption with Microsoft Managed Key Encryption Scope...")
+
+    print("Performing server-side encryption with Customer-Provided Key...")
 
     # Determine blob name based on settings
     if not OVERWRITE_EXISTING:

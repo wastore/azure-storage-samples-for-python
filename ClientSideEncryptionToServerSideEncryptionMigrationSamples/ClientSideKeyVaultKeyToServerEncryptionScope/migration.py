@@ -12,7 +12,7 @@ from settings import *
 
 
 def main():
-     # For more information on the usage of DefaultAzureCredential, see
+    # For more information on the usage of DefaultAzureCredential, see
     # https://docs.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential
     credentials = DefaultAzureCredential(exclude_interactive_browser_credential=False)
     key_client = KeyClient(vault_url=KEYVAULT_URL, credential=credentials)
@@ -23,6 +23,10 @@ def main():
     container_client = blob_service_client.get_container_client(CONTAINER_NAME)
     if not container_client.exists():
         raise ValueError("The specified container does not exist.")
+
+    # Create encryption scope if needed
+    if CREATE_ENCRYPTION_SCOPE:
+        create_encryption_scope()
 
     # Fetch the encryption key from KeyVault
     key_vault_key = get_keyvault_key(key_client, secret_client)
@@ -35,6 +39,20 @@ def main():
             download_blob(blob_service_client, CONTAINER_NAME, blob.name, key_vault_key, credentials)
             # Upload server-side encrypted blob
             upload_blob(blob_service_client, CONTAINER_NAME, blob.name, blob.blob_type)
+
+
+def create_encryption_scope() -> None:
+    # If a KeyVault URI was specified, create a Customer managed Encryption Scope 
+    if ENCRYPTION_SCOPE_KEY_KEYVAULT_URI:
+        print("\nCreating Customer Managed Key Encryption Scope...\n")
+        os.system(
+            'cmd /c "az storage account encryption-scope create --account-name ' + STORAGE_ACCOUNT + ' --name ' + ENCRYPTION_SCOPE_NAME + ' --key-source Microsoft.KeyVault --resource-group ' + RESOURCE_GROUP + ' --subscription ' + SUBSCRIPTION_ID + ' --key-uri ' + k_uri + '"')
+
+    # Else create a Microsoft managed Encryption Scope
+    else:
+        print("\nCreating Microsoft Managed Key Encryption Scope...\n")
+        os.system(
+            'cmd /c "az storage account encryption-scope create --account-name ' + STORAGE_ACCOUNT + ' --name ' + ENCRYPTION_SCOPE_NAME + ' --key-source Microsoft.Storage --resource-group ' + RESOURCE_GROUP + ' --subscription ' + SUBSCRIPTION_ID + '"')
 
 
 def is_client_side_encrypted_v1(blob: BlobProperties) -> bool:
@@ -91,7 +109,7 @@ def upload_blob(
         blob_name: str,
         blob_type: BlobType) -> None:
 
-    print("Performing server-side encryption with Customer-Provided Key...")
+    print("Performing server-side encryption with an Encryption Scope...")
 
     # Determine blob name based on settings
     if not OVERWRITE_EXISTING:
@@ -101,7 +119,7 @@ def upload_blob(
     with open("decryptedcontentfile.txt", "rb") as stream:
         blob_client.upload_blob(
             stream,
-            cpk=CUSTOMER_PROVIDED_KEY,
+            encryption_scope=ENCRYPTION_SCOPE_NAME,
             blob_type=blob_type,
             overwrite=OVERWRITE_EXISTING)
 

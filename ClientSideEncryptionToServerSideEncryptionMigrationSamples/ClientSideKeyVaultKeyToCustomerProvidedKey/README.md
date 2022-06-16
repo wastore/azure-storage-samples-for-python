@@ -1,20 +1,23 @@
 # KeyVault Client Side Encryption Migration to Customer Provided Key Server Side Encryption
 
-This program functions as a migration of data in Azure Storage from client side encryption with KeyVault to server side encryption using a Customer Provided Key for server side encryption.
+This script functions as a sample of migrating data that was previously uploaded using client-side encryption with a KeyVault key to now use server-side encryption with a Customer-Provided Key. The sample includes a script to generate sample data, `create_sample_data.py`, as well as a script that will migrate all data within a given container, `migration.py`.
 
 ## Getting Started
 ### Prerequisites
-Requires installation of [Python](https://www.python.org/downloads/) and [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest). Requires an [Azure subscription](https://azure.microsoft.com/en-us/free/) and an [Azure storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal).
+Requires installation of [Python 3](https://www.python.org/downloads/). Requires an [Azure subscription](https://azure.microsoft.com/en-us/free/) and an [Azure storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal).
 
-## How to Use
-###Setting Up the Program
-#### exampleDataCreator.py
-In the exampleDataCreator folder, please navigate to exampleDataCreator.py for a program example of what setup you should have completed before running the main program, migration.py. In this program, that means having performed client side encryption with a KeyVault key and having had uploaded it to Azure Storage as a blob.
+This sample requires the following packages to be installed:
+azure-storage-blob
+azure-identity
+azure-keyvault-keys
+azure-keyvault-secrets
 
-It is not required to run this file in order to run migration.py
-####settings.py
-In the setup folder, please read through and update the settings.py file with the required information before running the main program, migration.py. All of the information in the settings.py file is required, or else the program will not function.
+## Setup
+#### Settings
+The migration script and the sample data script require various settings about your Storage Account, Key Vault, etc. Please fill in the required values in `settings.py`.
 
-###Running the Main Program
-####migration.py
-After following the above steps under _Setting Up The Program_, all that is required to perform the migration is to run the file migration.py. This program will decrypt the KeyVault key client side encryption and re-upload the blob to Azure Storage with a Customer Provided Key for server side encryption.
+### Creating sample data
+The migration script expects some data to be set up ahead of time. Please see `create_sample_data.py` to see an example or to create sample data for testing. It is not required to run this file in order to run `migration.py`.
+
+## Migration Script
+Once setup is complete, the migration script, `migration.py` can be run to migrate all data within the provided container. The container name is provided in `settings.py`. Depending on the size of the container, this could take some time.
